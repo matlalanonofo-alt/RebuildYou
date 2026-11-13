@@ -1,0 +1,17 @@
+@model List<JobApplication>
+@{ ViewData["Title"] = "Applications"; }
+<div class="container section"><h1>Applications</h1><partial name="_AdminNav" />
+  <form method="get" class="mb-3 d-flex gap-2 align-items-end"><div><label class="form-label small" for="status">Status</label><select id="status" name="status" class="form-select"><option value="">All</option>@foreach (var s in Enum.GetValues<ApplicationStatus>()) { <option value="@s" selected="@(ViewBag.Status == s)">@s</option> }</select></div><button class="btn btn-ry">Filter</button><a class="btn btn-ry-outline" asp-action="ExportApplications">Export CSV</a></form>
+  @if (Model.Count == 0) { <div class="empty">No applications found.</div> }
+  @foreach (var a in Model) {
+    <form asp-action="UpdateApplication" method="post" class="feature mb-3"><input type="hidden" name="id" value="@a.Id" />
+      <div class="d-flex justify-content-between flex-wrap"><strong>@a.User?.FullName</strong><span class="small text-muted-ry">@a.Opportunity?.Title &middot; @a.SubmittedAt.ToLocalTime().ToString("d MMM yyyy")</span></div>
+      <p class="small mb-2">@a.User?.Email &middot; @a.User?.PhoneNumber @if (a.CvDocumentId != null) { <text>&middot; <a asp-action="ViewCv" asp-route-id="@a.CvDocumentId" target="_blank">View CV (logged)</a></text> }</p>
+      @if (!string.IsNullOrEmpty(a.CoverNote)) { <p class="small fst-italic">@a.CoverNote</p> }
+      <div class="row g-2">
+        <div class="col-md-3"><label class="form-label small">Status</label><select name="status" class="form-select form-select-sm">@foreach (var s in Enum.GetValues<ApplicationStatus>()) { <option value="@s" selected="@(a.Status == s)">@s</option> }</select></div>
+        <div class="col-md-3"><label class="form-label small">Interview date</label><input type="datetime-local" name="interviewDate" value="@a.InterviewDate?.ToString("yyyy-MM-ddTHH:mm")" class="form-control form-control-sm" /></div>
+        <div class="col-md-4"><label class="form-label small">Internal notes (staff only)</label><input name="notes" value="@a.InternalNotes" class="form-control form-control-sm" /></div>
+        <div class="col-md-2 d-flex align-items-end"><button class="btn btn-sm btn-ry w-100">Update</button></div>
+      </div></form> }
+</div>

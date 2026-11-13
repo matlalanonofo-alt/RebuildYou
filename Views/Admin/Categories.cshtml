@@ -1,0 +1,8 @@
+@model List<CareerCategory>
+@{ ViewData["Title"] = "Categories"; }
+<div class="container section"><h1>Career categories</h1><partial name="_AdminNav" />
+  <ul class="list-group mb-4">@foreach (var c in Model) { <li class="list-group-item"><strong>@c.Name</strong> <span class="small text-muted-ry">/@c.Slug</span></li> }</ul>
+  <form asp-action="AddCategory" method="post" class="feature"><h2 class="h6">Add category</h2>
+    <div class="mb-2"><label class="form-label small" for="name">Name</label><input id="name" name="name" class="form-control" required /></div>
+    <div class="mb-2"><label class="form-label small" for="description">Description</label><input id="description" name="description" class="form-control" required /></div><button class="btn btn-ry">Add</button></form>
+</div>

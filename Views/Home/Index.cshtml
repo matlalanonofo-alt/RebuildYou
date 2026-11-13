@@ -1,0 +1,80 @@
+@model HomeVM
+@{ ViewData["Title"] = "Build Skills. Create Opportunities. Transform Lives."; }
+<section class="hero">
+  <div class="container py-5">
+    <div class="row align-items-center py-lg-5">
+      <div class="col-lg-8">
+        <h1 class="display-3">BUILD SKILLS. CREATE OPPORTUNITIES. TRANSFORM LIVES.</h1>
+        <p class="lead mt-3">Free information on training, help to get work-ready, and real opportunities in one place. Make one profile and use it for everything.</p>
+        <p class="tagline">Rebuild your skills. Rebuild your confidence. Rebuild your future.</p>
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <a class="btn btn-ry btn-lg" asp-controller="Opportunities" asp-action="Index">Find opportunities</a>
+          <a class="btn btn-ry-outline btn-lg" asp-controller="Account" asp-action="Register">Create my free profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container section pb-0"><h2 class="text-center">What would you like to do today?</h2><div class="row g-3 mt-1">
+  <div class="col-md-4"><a class="cat-tile" asp-controller="Opportunities" asp-action="Index"><i class="bi bi-briefcase"></i><span>Find a job, learnership or internship</span></a></div>
+  <div class="col-md-4"><a class="cat-tile" asp-controller="Training" asp-action="Index"><i class="bi bi-mortarboard"></i><span>Learn a new skill</span></a></div>
+  <div class="col-md-4"><a class="cat-tile" asp-controller="Resources" asp-action="Index"><i class="bi bi-lightbulb"></i><span>Get work-ready: CV and interview help</span></a></div>
+</div></section>
+
+<section class="container section">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-6"><h2>About RebuildYOU</h2>
+      <p>Rebuild You Skills Academy (Pty) Ltd, trading as Rebuild You Training Centre, is a South African skills development and training organisation. We equip individuals with practical, industry-relevant competencies, professional conduct and the confidence to step into the workplace.</p>
+      <a class="btn btn-ry-outline" asp-controller="Home" asp-action="About">Read our story</a></div>
+    <div class="col-lg-6"><div class="row g-3">
+      @foreach (var (icon, t, d) in new[] { ("bi-tools","Practical Training","Programmes designed for real workplace success."), ("bi-graph-up-arrow","Workplace Readiness","Skills, confidence and tools to thrive."), ("bi-handshake","Partnerships That Matter","Working with corporates and communities."), ("bi-patch-check","Quality & Integrity","Excellence, accountability and sustainable growth.") })
+      { <div class="col-sm-6"><div class="feature"><i class="bi @icon"></i><h3 class="h6">@t</h3><p class="small mb-0">@d</p></div></div> }
+    </div></div>
+  </div>
+</section>
+
+<section class="band"><div class="container section">
+  <h2>Our Training Programmes</h2><p class="text-muted-ry">Programme details are added by RebuildYOU as they are confirmed.</p>
+  <div class="row g-4">
+    @foreach (var p in Model.Programmes) { <div class="col-md-6 col-lg-4"><div class="card ry-card h-100"><div class="card-body">
+      <i class="bi @p.Icon icon-lg"></i><h3 class="h5 mt-2">@p.Title</h3><p class="small">@p.Summary</p>
+      <a asp-controller="Training" asp-action="Details" asp-route-slug="@p.Slug" class="stretched-link">Learn more</a></div></div></div> }
+  </div>
+</div></section>
+
+<section class="container section">
+  <h2>Explore Careers</h2>
+  <div class="row g-3">
+    @foreach (var c in Model.Categories) { <div class="col-sm-6 col-lg-4"><a class="cat-tile" asp-controller="Careers" asp-action="Category" asp-route-slug="@c.Slug"><i class="bi @c.Icon"></i><span>@c.Name</span></a></div> }
+  </div>
+</section>
+
+<section class="band"><div class="container section">
+  <div class="d-flex justify-content-between align-items-end mb-3"><h2 class="mb-0">Latest Opportunities</h2><a asp-controller="Opportunities" asp-action="Index">View all</a></div>
+  @if (Model.Latest.Count == 0) { <div class="empty">No opportunities are open right now. Create an account to be ready when new ones are published.</div> }
+  else { <div class="row g-4">@foreach (var o in Model.Latest) { <div class="col-md-6 col-lg-4"><partial name="_OppCard" model="o" /></div> }</div> }
+</div></section>
+
+<section class="container section">
+  <div class="row g-4">
+    <div class="col-lg-6"><h2>Workplace Readiness</h2><p>CV preparation, interview preparation, job-application support, professional communication, workplace expectations and career guidance.</p>
+      <a class="btn btn-ry" asp-controller="Training" asp-action="Details" asp-route-slug="workplace-readiness">See what we offer</a></div>
+    <div class="col-lg-6"><h2>How the platform works</h2>
+      <ol class="steps"><li>Create your free account.</li><li>Upload your CV.</li><li>Browse opportunities and training programmes.</li><li>Apply and track your application status.</li></ol></div>
+  </div>
+</section>
+
+<section class="band"><div class="container section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="accordion ry-acc" id="faq">
+    @foreach (var (i, q, a) in new[] { (1,"Is it free to create an account?","Creating an account on this website does not require payment. Training fees, where applicable, are confirmed by RebuildYOU."), (2,"Does applying guarantee me a job?","No. Applications are reviewed by the employer or RebuildYOU and we cannot guarantee employment."), (3,"Who can see my CV?","Only you and authorised RebuildYOU staff with an operational need. Access is logged. See our Privacy Notice."), (4,"Which file types can I upload?","PDF or DOCX, up to 5 MB.") })
+    { <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#f@(i)">@q</button></h3><div id="f@(i)" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">@a</div></div></div> }
+  </div>
+</div></section>
+
+<section class="container section text-center">
+  <h2>Ready to take your next step?</h2>
+  <p>Visit us at 2 Anderson Street, Davidsonville, Roodepoort or send us a message.</p>
+  <a class="btn btn-ry btn-lg" asp-controller="Home" asp-action="Contact">Contact Us</a>
+</section>

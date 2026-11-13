@@ -1,0 +1,28 @@
+@model Opportunity
+@{ ViewData["Title"] = "Opportunity"; var cats = (List<CareerCategory>)ViewBag.Categories; }
+<div class="container section narrow"><h1>@(Model.Id == 0 ? "New opportunity" : "Edit opportunity")</h1>
+  <form asp-action="OpportunityForm" method="post" novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="row g-3">
+      <div class="col-md-8"><label asp-for="Title" class="form-label"></label><input asp-for="Title" class="form-control" /><span asp-validation-for="Title" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="EmployerName" class="form-label"></label><input asp-for="EmployerName" class="form-control" /><span asp-validation-for="EmployerName" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="CareerCategoryId" class="form-label"></label><select asp-for="CareerCategoryId" class="form-select" asp-items="@(new SelectList(cats, "Id", "Name"))"></select></div>
+      <div class="col-md-4"><label asp-for="Location" class="form-label"></label><input asp-for="Location" class="form-control" /><span asp-validation-for="Location" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="Type" class="form-label"></label><select asp-for="Type" class="form-select" asp-items="Html.GetEnumSelectList<OpportunityType>()"></select></div>
+      <div class="col-md-4"><label asp-for="Salary" class="form-label"></label><input asp-for="Salary" class="form-control" placeholder="Only if verified" /></div>
+      <div class="col-md-4"><label asp-for="Deadline" class="form-label"></label><input asp-for="Deadline" type="date" class="form-control" /></div>
+      <div class="col-md-4"><label asp-for="Status" class="form-label"></label><select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ListingStatus>()"></select></div>
+      <div class="col-md-6"><label asp-for="Qualifications" class="form-label"></label><input asp-for="Qualifications" class="form-control" /></div>
+      <div class="col-md-6"><label asp-for="Experience" class="form-label"></label><input asp-for="Experience" class="form-control" /></div>
+      <div class="col-12"><label asp-for="ShortDescription" class="form-label"></label><textarea asp-for="ShortDescription" rows="2" class="form-control"></textarea><span asp-validation-for="ShortDescription" class="text-danger"></span></div>
+      <div class="col-12"><label asp-for="Responsibilities" class="form-label"></label><textarea asp-for="Responsibilities" rows="4" class="form-control"></textarea></div>
+      <div class="col-md-6"><label asp-for="Skills" class="form-label"></label><input asp-for="Skills" class="form-control" /></div>
+      <div class="col-md-6"><label asp-for="DocumentsRequired" class="form-label"></label><input asp-for="DocumentsRequired" class="form-control" /></div>
+      <div class="col-12"><label asp-for="ApplicationInstructions" class="form-label"></label><textarea asp-for="ApplicationInstructions" rows="3" class="form-control"></textarea></div>
+      <div class="col-12"><label asp-for="ExternalUrl" class="form-label"></label><input asp-for="ExternalUrl" class="form-control" /><div class="form-text">Leave blank to accept applications through RebuildYOU.</div><span asp-validation-for="ExternalUrl" class="text-danger"></span></div>
+      <div class="col-12"><div class="form-check"><input asp-for="IsDemo" class="form-check-input" /><label asp-for="IsDemo" class="form-check-label">This is demonstration data (fictional)</label></div></div>
+    </div>
+    <button class="btn btn-ry mt-4">Save</button> <a class="btn btn-ry-outline mt-4" asp-action="Opportunities">Cancel</a>
+  </form>
+</div>

@@ -1,0 +1,6 @@
+@model List<Opportunity>
+@{ ViewData["Title"] = "Saved Opportunities"; }
+<div class="container section"><h1>Saved Opportunities</h1>
+  @if (Model.Count == 0) { <div class="empty">Nothing saved yet. Use "Save opportunity" on any opportunity page.</div> }
+  else { <div class="row g-4">@foreach (var o in Model) { <div class="col-md-6 col-lg-4"><partial name="_OppCard" model="o" /></div> }</div> }
+</div>

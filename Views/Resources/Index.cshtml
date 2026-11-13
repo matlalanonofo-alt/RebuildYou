@@ -1,0 +1,16 @@
+@{ ViewData["Title"] = "Get Work-Ready"; }
+<div class="container section narrow">
+  <h1>Get Work-Ready</h1>
+  <p class="lead">Simple, practical help for your next step. Everything here is free to read.</p>
+  <div class="accordion ry-acc" id="res">
+    @foreach (var (i, t, items) in new[] {
+      (1, "Make a CV that gets noticed", new[] { "Keep it to one or two pages.", "Put your name, phone number and email at the top.", "List your most recent experience first, even if it is volunteering or training.", "Add your education and any short courses or certificates.", "Ask someone you trust to check spelling before you upload it." }),
+      (2, "Prepare for an interview", new[] { "Read the job advert again and think of one example for each requirement.", "Practise saying who you are and why you want the job.", "Plan how you will get there and aim to arrive 15 minutes early.", "Dress neatly. Greet everyone politely.", "It is fine to ask questions. Ask about the next steps." }),
+      (3, "Your first weeks at work", new[] { "Be on time and tell your manager early if something comes up.", "Ask questions when unsure. It shows you care.", "Listen, take notes and learn names.", "Treat customers and colleagues with respect." }),
+      (4, "When you feel stuck or discouraged", new[] { "Rejection is part of every job search. It says nothing about your worth.", "Set a small goal each day, such as one application or one phone call.", "Talk to someone: a friend, family member or us. You do not have to do this alone." }) })
+    { <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button @(i == 1 ? "" : "collapsed")" data-bs-toggle="collapse" data-bs-target="#r@(i)">@t</button></h2>
+      <div id="r@(i)" class="accordion-collapse collapse @(i == 1 ? "show" : "")" data-bs-parent="#res"><div class="accordion-body"><ul class="mb-0">@foreach (var x in items) { <li>@x</li> }</ul></div></div></div> }
+  </div>
+  <div class="feature mt-4"><h2 class="h5">Success stories</h2><p class="mb-0">Coming soon. We only share real stories, with the person's permission.</p></div>
+  <div class="d-flex flex-wrap gap-2 mt-4"><a class="btn btn-ry" asp-controller="Account" asp-action="Register">Create my free profile</a><a class="btn btn-ry-outline" asp-controller="Training" asp-action="Details" asp-route-slug="workplace-readiness">Workplace readiness training</a></div>
+</div>

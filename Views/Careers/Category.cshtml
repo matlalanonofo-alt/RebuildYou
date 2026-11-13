@@ -1,0 +1,14 @@
+@model List<Opportunity>
+@{ var c = (CareerCategory)ViewBag.Category; ViewData["Title"] = c.Name; }
+<div class="container section">
+  <a asp-action="Index" class="small">&larr; All categories</a>
+  <h1 class="mt-2"><i class="bi @c.Icon"></i> @c.Name</h1><p class="lead">@c.Description</p>
+  <form method="get" class="row g-2 mb-4 filter">
+    <div class="col-md-4"><label class="form-label small" for="q">Job title</label><input id="q" name="q" value="@ViewBag.Q" class="form-control" /></div>
+    <div class="col-md-3"><label class="form-label small" for="location">Location</label><input id="location" name="location" value="@ViewBag.Location" class="form-control" /></div>
+    <div class="col-md-3"><label class="form-label small" for="type">Type</label><select id="type" name="type" class="form-select"><option value="">All types</option>@foreach (var t in Enum.GetValues<OpportunityType>()) { <option value="@t" selected="@((OpportunityType?)ViewBag.Type == t)">@t</option> }</select></div>
+    <div class="col-md-2 d-flex align-items-end"><button class="btn btn-ry w-100">Filter</button></div>
+  </form>
+  @if (Model.Count == 0) { <div class="empty">No opportunities are listed in this category right now. Please check back soon.</div> }
+  else { <div class="row g-4">@foreach (var o in Model) { o.Category = c; <div class="col-md-6 col-lg-4"><partial name="_OppCard" model="o" /></div> }</div> }
+</div>

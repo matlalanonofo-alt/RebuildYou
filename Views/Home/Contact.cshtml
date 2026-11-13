@@ -1,0 +1,28 @@
+@model ContactVM
+@inject IConfiguration Cfg
+@{ ViewData["Title"] = "Contact Us"; }
+<div class="container section">
+  <h1>Contact Us</h1>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="feature">
+        <h2 class="h5">RebuildYOU Training Centre</h2>
+        <p><i class="bi bi-geo-alt"></i> @Cfg["Site:Address"], South Africa</p>
+        <p><i class="bi bi-telephone"></i> <a href="tel:+27656001164">@Cfg["Site:Phone"]</a></p>
+        <p><i class="bi bi-envelope"></i> <a href="mailto:@Cfg["Site:Email"]">@Cfg["Site:Email"]</a></p>
+        <p class="mb-0"><i class="bi bi-instagram"></i> <a href="@Cfg["Site:Instagram"]" target="_blank" rel="noopener">@@rebuildyou_trainingcentre</a></p>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <form asp-action="Contact" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Leave blank<input asp-for="Website" tabindex="-1" autocomplete="off" /></label></div>
+        <div class="mb-3"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" /><span asp-validation-for="Name" class="text-danger"></span></div>
+        <div class="mb-3"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" /><span asp-validation-for="Email" class="text-danger"></span></div>
+        <div class="mb-3"><label asp-for="Subject" class="form-label"></label><input asp-for="Subject" class="form-control" /><span asp-validation-for="Subject" class="text-danger"></span></div>
+        <div class="mb-3"><label asp-for="Message" class="form-label"></label><textarea asp-for="Message" rows="5" class="form-control"></textarea><span asp-validation-for="Message" class="text-danger"></span></div>
+        <button class="btn btn-ry">Send message</button>
+      </form>
+    </div>
+  </div>
+</div>

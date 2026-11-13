@@ -1,0 +1,19 @@
+@model UserDetailVM
+@{ ViewData["Title"] = Model.User.FullName; var u = Model.User; }
+<div class="container section"><a asp-action="Users" class="small">&larr; All users</a><h1 class="mt-2">@u.FullName</h1><partial name="_AdminNav" />
+  <div class="row g-4">
+    <div class="col-lg-5"><div class="feature"><h2 class="h5">Profile</h2><dl class="mb-0">
+      <dt>Email</dt><dd>@u.Email</dd><dt>Mobile</dt><dd>@u.PhoneNumber</dd><dt>Area / city</dt><dd>@(u.City ?? "-")</dd>
+      <dt>Education</dt><dd>@(u.EducationLevel ?? "-")</dd><dt>Employment status</dt><dd>@(u.EmploymentStatus ?? "-")</dd>
+      <dt>Career interests</dt><dd>@(u.CareerInterests ?? "-")</dd><dt>Training interests</dt><dd>@(u.TrainingInterests ?? "-")</dd>
+      <dt>Registered</dt><dd>@u.CreatedAt.ToLocalTime().ToString("d MMMM yyyy HH:mm")</dd>
+      <dt>Last login</dt><dd>@(u.LastLoginAt?.ToLocalTime().ToString("d MMMM yyyy HH:mm") ?? "-") (@u.LoginCount logins)</dd>
+      <dt>Role / status</dt><dd>@(Model.IsAdmin ? "Administrator" : "User"), @(u.IsActive ? "Active" : "Suspended")</dd></dl></div></div>
+    <div class="col-lg-7">
+      <h2 class="h5">CVs</h2>@if (Model.Cvs.Count == 0) { <p class="text-muted-ry">No CV uploaded.</p> } else { <ul>@foreach (var c in Model.Cvs) { <li>@c.OriginalFileName, @c.UploadedAt.ToLocalTime().ToString("d MMM yyyy") &middot; <a asp-action="ViewCv" asp-route-id="@c.Id" target="_blank">View (logged)</a></li> }</ul> }
+      <h2 class="h5">Applications</h2>@if (Model.Applications.Count == 0) { <p class="text-muted-ry">None yet.</p> } else { <ul>@foreach (var a in Model.Applications) { <li>@a.Opportunity?.Title &middot; @a.Status &middot; @a.SubmittedAt.ToLocalTime().ToString("d MMM yyyy")</li> }</ul> }
+      <h2 class="h5">Courses of interest</h2>@if (Model.Interests.Count == 0) { <p class="text-muted-ry">None yet.</p> } else { <ul>@foreach (var i in Model.Interests) { <li>@i.Programme?.Title &middot; @i.At.ToLocalTime().ToString("d MMM yyyy")</li> }</ul> }
+      <h2 class="h5">Recent login activity</h2>@if (Model.Logins.Count == 0) { <p class="text-muted-ry">No activity recorded.</p> } else { <ul class="small">@foreach (var l in Model.Logins) { <li>@l.At.ToLocalTime().ToString("d MMM yyyy HH:mm") &middot; @l.Event &middot; @l.Ip</li> }</ul> }
+    </div>
+  </div>
+</div>

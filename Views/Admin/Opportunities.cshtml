@@ -1,0 +1,11 @@
+@model List<Opportunity>
+@{ ViewData["Title"] = "Manage Opportunities"; }
+<div class="container section"><h1>Opportunities</h1><partial name="_AdminNav" />
+  <a class="btn btn-ry mb-3" asp-action="OpportunityForm">New opportunity</a>
+  <div class="table-responsive"><table class="table ry-table align-middle"><thead><tr><th>Title</th><th>Category</th><th>Deadline</th><th>Status</th><th></th></tr></thead><tbody>
+  @foreach (var o in Model) { <tr><td>@o.Title @if (o.IsDemo) { <span class="badge text-bg-warning">Demo</span> }</td><td>@o.Category?.Name</td><td>@o.Deadline.ToString("d MMM yyyy")</td><td>@o.Status</td>
+    <td class="text-nowrap"><a class="btn btn-sm btn-ry-outline" asp-action="OpportunityForm" asp-route-id="@o.Id">Edit</a>
+    <form asp-action="SetOpportunityStatus" method="post" class="d-inline"><input type="hidden" name="id" value="@o.Id" />
+      <select name="status" class="form-select form-select-sm d-inline w-auto" aria-label="Set status" onchange="this.form.submit()"><option value="">Change...</option>@foreach (var s in Enum.GetValues<ListingStatus>()) { <option value="@s">@s</option> }</select></form></td></tr> }
+  </tbody></table></div>
+</div>

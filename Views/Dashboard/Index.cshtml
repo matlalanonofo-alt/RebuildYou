@@ -1,0 +1,28 @@
+@model DashboardVM
+@{ ViewData["Title"] = "My Dashboard"; }
+<div class="container section">
+  <h1>Welcome back, @Model.User.FirstName</h1>
+  @if (Model.Cv is null) { <div class="alert next"><strong>Next step:</strong> upload your CV so you can apply with one tap. <a class="btn btn-ry btn-sm ms-2" asp-action="Cv">Upload CV</a></div> }
+  else if (Model.Completion < 100) { <div class="alert next"><strong>Next step:</strong> finish your profile so we can match you better. <a class="btn btn-ry btn-sm ms-2" asp-controller="Account" asp-action="Profile">Update profile</a></div> }
+  else if (Model.Applications.Count == 0) { <div class="alert next"><strong>Next step:</strong> your profile is ready. Find something to apply for. <a class="btn btn-ry btn-sm ms-2" asp-controller="Opportunities" asp-action="Index">Find opportunities</a></div> }
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <a class="btn btn-ry" asp-action="Cv"><i class="bi bi-upload"></i> Upload CV</a>
+    <a class="btn btn-ry-outline" asp-controller="Account" asp-action="Profile">Update Profile</a>
+    <a class="btn btn-ry-outline" asp-controller="Opportunities" asp-action="Index">Browse Opportunities</a>
+    <a class="btn btn-ry-outline" asp-action="MyApplications">My Applications</a>
+    <a class="btn btn-ry-outline" asp-action="Saved">Saved Opportunities</a>
+    <a class="btn btn-ry-outline" asp-controller="Training" asp-action="Index">Training Programmes</a>
+  </div>
+  <div class="row g-4">
+    <div class="col-md-6"><div class="feature h-100"><h2 class="h5">Profile completion</h2>
+      <div class="progress" role="progressbar" aria-valuenow="@Model.Completion" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width:@(Model.Completion)%">@Model.Completion%</div></div>
+      <p class="mt-3 mb-0">CV status: @if (Model.Cv is null) { <span class="badge text-bg-warning">Not uploaded</span> } else { <span class="badge text-bg-success">Uploaded</span> <span class="small">@Model.Cv.OriginalFileName</span> }</p></div></div>
+    <div class="col-md-6"><div class="feature h-100"><h2 class="h5">Recent applications</h2>
+      @if (Model.Applications.Count == 0) { <p class="mb-0">You have not applied yet. <a asp-controller="Opportunities" asp-action="Index">Find an opportunity</a>.</p> }
+      else { <ul class="list-unstyled mb-0">@foreach (var a in Model.Applications) { <li class="d-flex justify-content-between"><span>@a.Opportunity?.Title</span><span class="badge badge-cat">@a.Status</span></li> }</ul> }</div></div>
+    <div class="col-12"><h2 class="h5">Recommended opportunities</h2>
+      @if (Model.Recommended.Count == 0) { <div class="empty">No open opportunities yet.</div> }
+      else { <div class="row g-4">@foreach (var o in Model.Recommended) { <div class="col-md-6 col-lg-4"><partial name="_OppCard" model="o" /></div> }</div> }</div>
+    <div class="col-12"><h2 class="h5">Training programmes for you</h2><div class="row g-3">@foreach (var p in Model.Programmes) { <div class="col-md-4"><a class="cat-tile" asp-controller="Training" asp-action="Details" asp-route-slug="@p.Slug"><i class="bi @p.Icon"></i><span>@p.Title</span></a></div> }</div></div>
+  </div>
+</div>

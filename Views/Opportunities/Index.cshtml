@@ -1,0 +1,23 @@
+@model OppListVM
+@{ ViewData["Title"] = "Careers"; }
+<div class="container section">
+  <h1>Careers and Opportunities</h1>
+  <form method="get" class="filter row g-2 mb-4" role="search">
+    <div class="col-md-3"><label class="form-label small" for="q">Job title or employer</label><input id="q" name="q" value="@Model.Q" class="form-control" /></div>
+    <div class="col-md-3"><label class="form-label small" for="categoryId">Career category</label>
+      <select id="categoryId" name="categoryId" class="form-select"><option value="">All categories</option>@foreach (var c in Model.Categories) { <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Name</option> }</select></div>
+    <div class="col-md-2"><label class="form-label small" for="location">Location</label><input id="location" name="location" value="@Model.Location" list="locs" class="form-control" />
+      <datalist id="locs"><option>Johannesburg</option><option>Roodepoort</option><option>Soweto</option><option>Pretoria</option><option>Durban</option></datalist></div>
+    <div class="col-md-2"><label class="form-label small" for="type">Type</label>
+      <select id="type" name="type" class="form-select"><option value="">All types</option>@foreach (var t in Enum.GetValues<OpportunityType>()) { <option value="@t" selected="@(Model.Type == t)">@t</option> }</select></div>
+    <div class="col-md-2 d-flex align-items-end gap-2"><div class="form-check"><input class="form-check-input" type="checkbox" id="includeClosed" name="includeClosed" value="true" checked="@Model.IncludeClosed" /><label class="form-check-label small" for="includeClosed">Show closed</label></div><button class="btn btn-ry">Search</button></div>
+  </form>
+  @if (Model.Items.Count == 0) { <div class="empty"><i class="bi bi-search"></i> No opportunities match your search. Try removing a filter or <a asp-action="Index">view all opportunities</a>.</div> }
+  else { <div class="row g-4">@foreach (var o in Model.Items) { <div class="col-md-6 col-lg-4"><partial name="_OppCard" model="o" /></div> }</div> }
+  @if (Model.Pages > 1)
+  {
+    <nav class="mt-4" aria-label="Pages"><ul class="pagination">
+      @for (var i = 1; i <= Model.Pages; i++) { <li class="page-item @(i == Model.Page ? "active" : "")"><a class="page-link" asp-action="Index" asp-route-q="@Model.Q" asp-route-categoryId="@Model.CategoryId" asp-route-location="@Model.Location" asp-route-type="@Model.Type" asp-route-includeClosed="@Model.IncludeClosed" asp-route-page="@i">@i</a></li> }
+    </ul></nav>
+  }
+</div>

@@ -1,0 +1,9 @@
+@model List<TrainingProgramme>
+@{ ViewData["Title"] = "Manage Programmes"; }
+<div class="container section"><h1>Training programmes</h1><partial name="_AdminNav" />
+  <a class="btn btn-ry mb-3" asp-action="ProgrammeForm">Add programme</a>
+  <div class="table-responsive"><table class="table ry-table align-middle"><thead><tr><th>Title</th><th>Status</th><th></th></tr></thead><tbody>
+  @foreach (var p in Model) { <tr><td>@p.Title</td><td>@(p.IsArchived ? "Archived" : p.IsPublished ? "Published" : "Unpublished")</td><td class="text-nowrap"><a class="btn btn-sm btn-ry-outline" asp-action="ProgrammeForm" asp-route-id="@p.Id">Edit</a>
+    @foreach (var act in new[] { "publish", "unpublish", "archive", "restore" }) { <form asp-action="ProgrammeState" method="post" class="d-inline"><input type="hidden" name="id" value="@p.Id" /><input type="hidden" name="op" value="@act" /><button class="btn btn-sm btn-outline-secondary">@act</button></form> }</td></tr> }
+  </tbody></table></div>
+</div>

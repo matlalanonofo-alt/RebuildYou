@@ -1,0 +1,14 @@
+@model LoginVM
+@{ ViewData["Title"] = "Login"; }
+<div class="container section narrow-sm">
+  <h1>Log in</h1>
+  <form asp-action="Login" method="post" novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="mb-3"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" autocomplete="email" /><span asp-validation-for="Email" class="text-danger"></span></div>
+    <div class="mb-3"><label asp-for="Password" class="form-label"></label><div class="input-group"><input asp-for="Password" class="form-control" autocomplete="current-password" /><button type="button" class="btn btn-ry-outline" data-pw="#Password">Show</button></div><span asp-validation-for="Password" class="text-danger"></span></div>
+    <div class="form-check mb-3"><input asp-for="RememberMe" class="form-check-input" /><label asp-for="RememberMe" class="form-check-label"></label></div>
+    <button class="btn btn-ry w-100">Log in</button>
+  </form>
+  <p class="small text-muted-ry mt-3">Forgot your password? Call or WhatsApp us on +27 65 600 1164 and we will help you back in.</p><p class="mt-2">New here? <a asp-action="Register">Create an account</a></p>
+</div>

@@ -1,0 +1,15 @@
+@model List<ApplicationUser>
+@{ ViewData["Title"] = "Users"; var admins = (HashSet<string>)ViewBag.AdminIds; }
+<div class="container section"><h1>Registered users</h1><partial name="_AdminNav" />
+  <form method="get" class="row g-2 mb-3"><div class="col-md-4"><label class="form-label small" for="q">Search name, email or mobile</label><input id="q" name="q" value="@ViewBag.Q" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label small" for="interest">Career interest</label><input id="interest" name="interest" value="@ViewBag.Interest" class="form-control" /></div><div class="col-md-2 d-flex align-items-end"><button class="btn btn-ry">Search</button></div></form>
+  <p class="small text-muted-ry">@Model.Count user(s) shown</p>
+  <div class="table-responsive"><table class="table ry-table align-middle"><thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Registered</th><th>Last login</th><th>Logins</th><th>Role</th><th></th></tr></thead><tbody>
+  @foreach (var u in Model) { <tr><td><a asp-action="UserDetail" asp-route-id="@u.Id">@u.FullName</a></td><td>@u.Email</td><td>@u.PhoneNumber</td><td>@u.CreatedAt.ToLocalTime().ToString("d MMM yyyy")</td>
+    <td>@(u.LastLoginAt?.ToLocalTime().ToString("d MMM yyyy HH:mm") ?? "-")</td><td>@u.LoginCount</td><td>@(admins.Contains(u.Id) ? "Admin" : "User") @if (!u.IsActive) { <span class="badge text-bg-danger">Suspended</span> }</td>
+    <td class="text-nowrap"><a class="btn btn-sm btn-ry-outline" asp-action="UserDetail" asp-route-id="@u.Id">View</a>
+      <form asp-action="ToggleUser" asp-route-id="@u.Id" method="post" class="d-inline"><button class="btn btn-sm @(u.IsActive ? "btn-outline-danger" : "btn-ry-outline")">@(u.IsActive ? "Suspend" : "Reactivate")</button></form>
+      <form asp-action="ResetPassword" asp-route-id="@u.Id" method="post" class="d-inline" onsubmit="return confirm('Create a temporary password for this user?');"><button class="btn btn-sm btn-outline-secondary">Reset password</button></form>
+      <form asp-action="ToggleAdmin" asp-route-id="@u.Id" method="post" class="d-inline" onsubmit="return confirm('Change administrator access for this user?');"><button class="btn btn-sm btn-outline-secondary">@(admins.Contains(u.Id) ? "Remove admin" : "Make admin")</button></form></td></tr> }
+  </tbody></table></div>
+</div>

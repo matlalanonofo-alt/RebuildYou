@@ -1,0 +1,5 @@
+@model List<CareerCategory>
+@{ ViewData["Title"] = "Career Categories"; }
+<div class="container section"><h1>Career Categories</h1><p class="lead">Choose a category to see only the opportunities in that field.</p>
+  <div class="row g-4">@foreach (var c in Model) { <div class="col-md-6 col-lg-4"><div class="card ry-card h-100"><div class="card-body"><i class="bi @c.Icon icon-lg"></i><h2 class="h5 mt-2">@c.Name</h2><p>@c.Description</p><a class="stretched-link" asp-action="Category" asp-route-slug="@c.Slug">See opportunities</a></div></div></div> }</div>
+</div>

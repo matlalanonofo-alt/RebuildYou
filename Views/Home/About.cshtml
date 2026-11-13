@@ -1,0 +1,21 @@
+@{ ViewData["Title"] = "About Us"; }
+<div class="container section">
+  <h1>About RebuildYOU Training Centre</h1>
+  <p class="lead">Rebuild You Skills Academy (Pty) Ltd, trading as Rebuild You Training Centre, is a South African skills development and training organisation.</p>
+  <div class="row g-4 mt-1">
+    <div class="col-lg-6"><h2 class="h4">Our Story</h2><p>The company was established in response to the growing disconnect between formal education and workplace readiness, where many people hold qualifications but lack the practical skills, confidence and exposure needed to secure and sustain employment. We address this gap with structured, hands-on training that focuses on real-world application, professional conduct and measurable outcomes.</p></div>
+    <div class="col-lg-6"><h2 class="h4">Our Approach</h2><p>Programmes simulate real workplace environments so learners gain confidence, develop competence and move into employment or entrepreneurial opportunities. Training is currently delivered as skills-based programmes with certificates of completion.</p></div>
+    <div class="col-lg-6"><h2 class="h4">Our Vision</h2><p>To be a recognised leader in practical skills development and workforce readiness training in South Africa, delivering programmes that bridge the gap between education and employment.</p></div>
+    <div class="col-lg-6"><h2 class="h4">Our Mission</h2><p>To design and deliver high-quality, practical and industry-aligned training programmes that equip individuals and organisations with the competencies required for workplace success.</p></div>
+  </div>
+  <h2 class="h4 mt-4">Our Values</h2>
+  <div class="row g-3">
+    @foreach (var (t, d) in new[] { ("Excellence","High-quality programmes that meet industry standards."), ("Integrity","Honesty, transparency and accountability."), ("Empowerment","Unlocking potential through knowledge, skills and confidence."), ("Impact","Meaningful and sustainable outcomes for people and communities."), ("Innovation","Training that adapts to the changing needs of the workforce.") })
+    { <div class="col-md-6 col-lg-4"><div class="feature h-100"><h3 class="h6">@t</h3><p class="small mb-0">@d</p></div></div> }
+  </div>
+  <h2 class="h4 mt-4">Our Services</h2>
+  <ul><li>Corporate training: customer service, call centre, workplace communication, professional conduct</li><li>Skills development: computer skills, administration and reception, hospitality</li><li>Employment readiness: CV development, interview preparation, job-application support</li><li>Consulting: workforce development strategy, training design, skills gap analysis</li></ul>
+  <h2 class="h4 mt-4">Leadership</h2><p>Lerease Sam is the Chief Executive Officer and Founder, responsible for strategic direction, partnerships, programme development and business growth.</p>
+  <h2 class="h4 mt-4">Accreditation</h2><p>Training is currently delivered as skills-based programmes with certificates of completion. RebuildYOU is working towards accreditation with relevant bodies and will publish accreditation details here once confirmed.</p>
+  <div class="small text-muted-ry">Registered as Rebuild You Skills Academy (Pty) Ltd, registration number 2026/224767/07.</div>
+</div>

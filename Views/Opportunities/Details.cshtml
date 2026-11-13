@@ -1,0 +1,32 @@
+@model Opportunity
+@{ ViewData["Title"] = Model.Title; bool applied = ViewBag.Applied; bool saved = ViewBag.Saved; }
+<div class="container section">
+  <a asp-action="Index" class="small">&larr; All opportunities</a>
+  @if (Model.IsDemo) { <div class="alert alert-warning mt-2">Demonstration data. This is not a real vacancy.</div> }
+  <div class="row g-4 mt-1">
+    <div class="col-lg-8">
+      <span class="badge badge-cat">@Model.Category?.Name</span>
+      <h1 class="mt-2">@Model.Title</h1>
+      <p class="text-muted-ry">@Model.EmployerName &middot; @Model.Location &middot; @Model.Type</p>
+      <p>@Model.ShortDescription</p>
+      @if (!string.IsNullOrWhiteSpace(Model.Responsibilities)) { <h2 class="h5">Responsibilities</h2><p style="white-space:pre-line">@Model.Responsibilities</p> }
+      @if (!string.IsNullOrWhiteSpace(Model.Qualifications)) { <h2 class="h5">Required qualifications</h2><p>@Model.Qualifications</p> }
+      @if (!string.IsNullOrWhiteSpace(Model.Skills)) { <h2 class="h5">Required skills</h2><p>@Model.Skills</p> }
+      @if (!string.IsNullOrWhiteSpace(Model.Experience)) { <h2 class="h5">Experience</h2><p>@Model.Experience</p> }
+      @if (!string.IsNullOrWhiteSpace(Model.ApplicationInstructions)) { <h2 class="h5">How to apply</h2><p style="white-space:pre-line">@Model.ApplicationInstructions</p> }
+      @if (!string.IsNullOrWhiteSpace(Model.DocumentsRequired)) { <h2 class="h5">Documents required</h2><p>@Model.DocumentsRequired</p> }
+    </div>
+    <div class="col-lg-4"><div class="feature">
+      <p class="mb-1"><strong>Closing date:</strong> @Model.Deadline.ToString("d MMMM yyyy")</p>
+      <p class="mb-1"><strong>Published:</strong> @Model.DatePublished.ToString("d MMMM yyyy")</p>
+      @if (!string.IsNullOrEmpty(Model.Salary)) { <p class="mb-1"><strong>Salary / stipend:</strong> @Model.Salary</p> }
+      <p><strong>Status:</strong> @(Model.IsOpen ? "Open" : "Closed")</p>
+      @if (!Model.IsOpen) { <div class="alert alert-secondary">This opportunity is no longer accepting applications.</div> }
+      else if (!string.IsNullOrEmpty(Model.ExternalUrl)) { <a class="btn btn-ry w-100" href="@Model.ExternalUrl" target="_blank" rel="noopener noreferrer">Apply on employer website <i class="bi bi-box-arrow-up-right"></i></a> }
+      else if (applied) { <a class="btn btn-ry-outline w-100" asp-controller="Dashboard" asp-action="MyApplications">You have applied. View status</a> }
+      else { <a class="btn btn-ry w-100" asp-controller="Dashboard" asp-action="Apply" asp-route-id="@Model.Id">Apply Now</a> }
+      @if (User.Identity?.IsAuthenticated == true) { <form asp-action="ToggleSave" asp-route-id="@Model.Id" method="post" class="mt-2"><button class="btn btn-ry-outline w-100"><i class="bi @(saved ? "bi-bookmark-check-fill" : "bi-bookmark")"></i> @(saved ? "Saved" : "Save opportunity")</button></form> }
+      <p class="small text-muted-ry mt-3 mb-0">Applying does not guarantee employment.</p>
+    </div></div>
+  </div>
+</div>

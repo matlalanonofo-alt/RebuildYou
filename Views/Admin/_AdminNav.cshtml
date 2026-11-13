@@ -1,0 +1,4 @@
+<ul class="nav nav-pills mb-4 flex-wrap gap-1">
+  @foreach (var (a, t) in new[] { ("Index","Overview"), ("Users","Users"), ("LoginActivity","Login activity"), ("Opportunities","Opportunities"), ("Applications","Applications"), ("Programmes","Programmes"), ("Categories","Categories"), ("Interest","Programme interest"), ("Enquiries","Enquiries") })
+  { <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="@a">@t</a></li> }
+</ul>

@@ -1,0 +1,15 @@
+@model AdminStatsVM
+@{ ViewData["Title"] = "Admin Dashboard"; }
+<div class="container section">
+  <h1>Admin Dashboard</h1><partial name="_AdminNav" />
+  <div class="row g-3">
+    @foreach (var (l, v) in new[] { ("Registered users", Model.Users), ("Active users", Model.ActiveUsers), ("Uploaded CVs", Model.Cvs), ("Published opportunities", Model.Published), ("Open opportunities", Model.Open), ("Expired opportunities", Model.Expired), ("Total applications", Model.Applications), ("Awaiting review", Model.AwaitingReview), ("Shortlisted", Model.Shortlisted), ("Published programmes", Model.Programmes), ("Unhandled enquiries", Model.Enquiries), ("Logins today", Model.LoginsToday) })
+    { <div class="col-6 col-md-4 col-xl-3"><div class="stat"><div class="stat-n">@v</div><div>@l</div></div></div> }
+  </div>
+  <div class="row g-4 mt-2">
+    <div class="col-md-6"><h2 class="h5">Applications by category</h2>@if (Model.ByCategory.Count == 0) { <p class="text-muted-ry">No applications yet.</p> } else { <ul class="list-group">@foreach (var (n, c) in Model.ByCategory) { <li class="list-group-item d-flex justify-content-between">@n<span class="badge badge-cat">@c</span></li> }</ul> }</div>
+    <div class="col-md-6"><h2 class="h5">Applications by status</h2>@if (Model.ByStatus.Count == 0) { <p class="text-muted-ry">No applications yet.</p> } else { <ul class="list-group">@foreach (var (n, c) in Model.ByStatus) { <li class="list-group-item d-flex justify-content-between">@n<span class="badge badge-cat">@c</span></li> }</ul> }</div>
+    <div class="col-12"><h2 class="h5">Recent admin activity</h2>@if (Model.Recent.Count == 0) { <p class="text-muted-ry">Nothing yet.</p> } else { <ul class="list-unstyled small">@foreach (var a in Model.Recent) { <li>@a.At.ToLocalTime().ToString("d MMM HH:mm") &middot; @a.Action @a.Details</li> }</ul> }
+      <a class="btn btn-ry-outline" asp-action="ExportApplications">Export applications report (CSV)</a></div>
+  </div>
+</div>
