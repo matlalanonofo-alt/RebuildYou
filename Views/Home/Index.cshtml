@@ -1,16 +1,19 @@
 @model HomeVM
 @{ ViewData["Title"] = "Build Skills. Create Opportunities. Transform Lives."; }
 <section class="hero">
-  <div class="container py-5">
-    <div class="row align-items-center py-lg-5">
-      <div class="col-lg-8">
+  <div class="container">
+    <div class="hero-layout">
+      <div class="hero-content text-start">
         <h1 class="display-3">BUILD SKILLS. CREATE OPPORTUNITIES. TRANSFORM LIVES.</h1>
         <p class="lead mt-3">Free information on training, help to get work-ready, and real opportunities in one place. Make one profile and use it for everything.</p>
         <p class="tagline">Rebuild your skills. Rebuild your confidence. Rebuild your future.</p>
-        <div class="d-flex flex-wrap gap-2 mt-4">
+        <div class="d-flex flex-wrap justify-content-start gap-2 mt-4">
           <a class="btn btn-ry btn-lg" asp-controller="Opportunities" asp-action="Index">Find opportunities</a>
           <a class="btn btn-ry-outline btn-lg" asp-controller="Account" asp-action="Register">Create my free profile</a>
         </div>
+      </div>
+      <div class="hero-image-container">
+        <img class="hero-image" src="~/img/RebuildYou3.svg" alt="RebuildYOU Training Centre" />
       </div>
     </div>
   </div>
