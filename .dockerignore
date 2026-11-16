@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+.git/
+.gitignore
+.vs/
+.vscode/
+*.user
+*.suo
+RebuildYou_v*.zip
+Output-Build.txt
+Dockerfile
+DOCKER.md
