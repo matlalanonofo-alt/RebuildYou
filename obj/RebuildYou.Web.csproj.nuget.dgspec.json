@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\matla\\OneDrive - CTU Career\\Desktop\\WIL Program Rebuild You\\RebuildYou_v9\\RebuildYou\\RebuildYou.Web\\RebuildYou.Web.csproj": {}
+    "C:\\Users\\thato\\Documents\\GitHub\\RebuildYou\\RebuildYou.Web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\matla\\OneDrive - CTU Career\\Desktop\\WIL Program Rebuild You\\RebuildYou_v9\\RebuildYou\\RebuildYou.Web\\RebuildYou.Web.csproj": {
+    "C:\\Users\\thato\\Documents\\GitHub\\RebuildYou\\RebuildYou.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\matla\\OneDrive - CTU Career\\Desktop\\WIL Program Rebuild You\\RebuildYou_v9\\RebuildYou\\RebuildYou.Web\\RebuildYou.Web.csproj",
+        "projectUniqueName": "C:\\Users\\thato\\Documents\\GitHub\\RebuildYou\\RebuildYou.Web.csproj",
         "projectName": "RebuildYou.Web",
-        "projectPath": "C:\\Users\\matla\\OneDrive - CTU Career\\Desktop\\WIL Program Rebuild You\\RebuildYou_v9\\RebuildYou\\RebuildYou.Web\\RebuildYou.Web.csproj",
-        "packagesPath": "C:\\Users\\matla\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\matla\\OneDrive - CTU Career\\Desktop\\WIL Program Rebuild You\\RebuildYou_v9\\RebuildYou\\RebuildYou.Web\\obj\\",
+        "projectPath": "C:\\Users\\thato\\Documents\\GitHub\\RebuildYou\\RebuildYou.Web.csproj",
+        "packagesPath": "C:\\Users\\thato\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\thato\\Documents\\GitHub\\RebuildYou\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\matla\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\thato\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -80,6 +80,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.32, 8.0.32]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.32, 8.0.32]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.32, 8.0.32]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.32, 8.0.32]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -88,7 +106,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.402/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
