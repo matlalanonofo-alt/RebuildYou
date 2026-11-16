@@ -1,7 +1,7 @@
 @model HomeVM
 @{ ViewData["Title"] = "Build Skills. Create Opportunities. Transform Lives."; }
 <section class="hero">
-  <div class="container">
+  <div class="hero-container">
     <div class="hero-layout">
       <div class="hero-content text-start">
         <h1 class="display-3">BUILD SKILLS. CREATE OPPORTUNITIES. TRANSFORM LIVES.</h1>
@@ -24,12 +24,12 @@
   <div class="col-md-4"><a class="cat-tile" asp-controller="Resources" asp-action="Index"><i class="bi bi-lightbulb"></i><span>Get work-ready: CV and interview help</span></a></div>
 </div></section>
 
-<section class="container section">
-  <div class="row g-4 align-items-center">
-    <div class="col-lg-6"><h2>About RebuildYOU</h2>
-      <p>Rebuild You Skills Academy (Pty) Ltd, trading as Rebuild You Training Centre, is a South African skills development and training organisation. We equip individuals with practical, industry-relevant competencies, professional conduct and the confidence to step into the workplace.</p>
+<section class="section about-section">
+  <div class="about-layout">
+    <div class="about-content text-center"><h2>About US</h2>
+      <p>We are a South African skills development and training organisation equipping individuals for the modern workplace.</p>
       <a class="btn btn-ry-outline" asp-controller="Home" asp-action="About">Read our story</a></div>
-    <div class="col-lg-6"><img class="img-fluid" src="~/img/RebuildYou1.svg" alt="RebuildYOU Training Centre" /></div>
+    <div class="about-image-container"><img class="about-image" src="~/img/RebuildYou1.svg" alt="RebuildYOU Training Centre" /></div>
   </div>
 </section>
 
