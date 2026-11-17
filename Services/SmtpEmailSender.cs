@@ -16,6 +16,8 @@ public sealed class SmtpEmailSender(IConfiguration configuration) : IAppEmailSen
     public bool IsConfigured =>
         !string.IsNullOrWhiteSpace(settings["Host"]) &&
         int.TryParse(settings["Port"], out var port) && port is > 0 and <= 65535 &&
+        !string.IsNullOrWhiteSpace(settings["Username"]) &&
+        !string.IsNullOrWhiteSpace(settings["Password"]) &&
         MailAddress.TryCreate(settings["FromEmail"], out _);
 
     public async Task SendPasswordResetAsync(string email, string resetUrl)

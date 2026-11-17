@@ -19,7 +19,15 @@ This version adds new tables and columns. Delete the old database first: View > 
 Short 1-minute registration (name, mobile, email, password) with the rest added later in the profile; one profile per person (duplicate email or mobile is blocked with a "log in instead" prompt); CV upload fills empty profile fields (area, education, career interests) on a best-effort basis; "Register my interest" on programmes with an admin list (Admin > Programme interest); closed vacancies hidden by default; a "Next step" card on the dashboard; "Get Work-Ready" and "For Employers" pages; show-password buttons; 48px tap targets; WhatsApp link (confirm the number is WhatsApp-enabled).
 
 ## Configure password-recovery email
-Password recovery emails use the SMTP settings under `Email`. Set `Email:Host`, `Email:Port`, and `Email:FromEmail`; for authenticated SMTP also set `Email:Username` and `Email:Password`. Keep credentials in User Secrets or environment variables, not in source control. For example, environment variable names are `Email__Host`, `Email__Port`, `Email__Username`, `Email__Password`, and `Email__FromEmail`. If email is not configured, the forgot-password page explains that recovery is unavailable.
+Password recovery emails use Gmail SMTP by default (`smtp.gmail.com`, port `587`, SSL enabled). For Gmail or Google Workspace, enable 2-Step Verification and create an App Password; use that App Password, not your normal account password. Set your sender/username and App Password in User Secrets from the project directory:
+
+```powershell
+dotnet user-secrets set "Email:Username" "your-address@gmail.com"
+dotnet user-secrets set "Email:FromEmail" "your-address@gmail.com"
+dotnet user-secrets set "Email:Password" "your-google-app-password"
+```
+
+Replace the example values locally; never commit or share the App Password. In production, set `Email__Username`, `Email__FromEmail`, and `Email__Password` as protected environment/app settings. If any required SMTP setting is missing, the forgot-password page explains that recovery is unavailable.
 
 ## Not included yet (next phase)
 Email verification, email/in-app notifications, supporting-document uploads, announcements/FAQ/testimonial CMS, Excel export, extra reports, automated tests, real photographs. See the notes in the chat for details.
