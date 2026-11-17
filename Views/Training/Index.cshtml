@@ -1,0 +1,116 @@
+@{
+    ViewData["Title"] = "Training Courses";
+    var courses = new[]
+    {
+        new
+        {
+            Title = "Computer Training",
+            Tagline = "Digital skills. Endless possibilities.",
+            Icon = "bi-laptop",
+            Duration = "2 weeks",
+            Investment = "R1,050",
+            Modules = new[]
+            {
+                "Workplace Readiness",
+                "Computer Basics",
+                "Microsoft Office: Word, Excel and PowerPoint",
+                "Internet and Email Skills",
+                "File Management"
+            }
+        },
+        new
+        {
+            Title = "Hospitality Training",
+            Tagline = "Serve with skill. Lead with confidence.",
+            Icon = "bi-cup-hot",
+            Duration = "3 weeks",
+            Investment = "R1,050",
+            Modules = new[]
+            {
+                "Workplace Readiness",
+                "Customer Service Excellence",
+                "Food and Beverage Service Basics",
+                "Communication Skills",
+                "Professional Etiquette"
+            }
+        },
+        new
+        {
+            Title = "Reception and Administration Training",
+            Tagline = "Professional skills. Real opportunities.",
+            Icon = "bi-journal-text",
+            Duration = "4 weeks",
+            Investment = "R1,350",
+            Modules = new[]
+            {
+                "Workplace Readiness",
+                "Office Administration Skills",
+                "Communication Skills",
+                "CV Writing",
+                "Time Management Basics"
+            }
+        },
+        new
+        {
+            Title = "Call Centre Training",
+            Tagline = "Build your skills. Build your future.",
+            Icon = "bi-headset",
+            Duration = "4 weeks",
+            Investment = "R1,350",
+            Modules = new[]
+            {
+                "Workplace Readiness",
+                "Communication Skills",
+                "CV Writing",
+                "Social Media Presence",
+                "Customer Service Excellence"
+            }
+        }
+    };
+}
+
+<section class="section" aria-labelledby="courses-heading">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 narrow">
+            <p class="tagline mb-2">RebuildYOU Training Centre</p>
+            <h1 id="courses-heading">Build skills. Create opportunities.</h1>
+            <p class="lead mb-0">Practical courses designed to help you grow in confidence and prepare for the workplace.</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var course in courses)
+            {
+                <div class="col-md-6">
+                    <article class="card ry-card h-100">
+                        <div class="card-body d-flex flex-column p-4 p-lg-5">
+                            <div class="d-flex align-items-start gap-3 mb-3">
+                                <span class="icon-lg" aria-hidden="true"><i class="bi @course.Icon"></i></span>
+                                <div>
+                                    <h2 class="h3 mb-1">@course.Title</h2>
+                                    <p class="tagline mb-0">@course.Tagline</p>
+                                </div>
+                            </div>
+
+                            <h3 class="h5 mt-3">What you will learn</h3>
+                            <ul class="mb-4">
+                                @foreach (var module in course.Modules)
+                                {
+                                    <li>@module</li>
+                                }
+                            </ul>
+
+                            <dl class="row border-top pt-3 mb-4 mt-auto">
+                                <dt class="col-5">Duration</dt>
+                                <dd class="col-7">@course.Duration</dd>
+                                <dt class="col-5">Investment</dt>
+                                <dd class="col-7">@course.Investment, including registration</dd>
+                            </dl>
+
+                            <a class="btn btn-ry w-100" asp-controller="Account" asp-action="Register">Enrol Now</a>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    </div>
+</section>
