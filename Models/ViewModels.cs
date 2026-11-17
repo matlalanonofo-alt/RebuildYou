@@ -26,6 +26,19 @@ public class LoginVM
     public string? ReturnUrl { get; set; }
 }
 
+public class ForgotPasswordVM
+{
+    [Required, EmailAddress, Display(Name = "Email address")] public string Email { get; set; } = "";
+}
+
+public class ResetPasswordVM
+{
+    [Required, EmailAddress, Display(Name = "Email address")] public string Email { get; set; } = "";
+    [Required] public string Token { get; set; } = "";
+    [Required, DataType(DataType.Password), Display(Name = "New password")] public string Password { get; set; } = "";
+    [Required, DataType(DataType.Password), Compare(nameof(Password)), Display(Name = "Confirm new password")] public string ConfirmPassword { get; set; } = "";
+}
+
 public class ProfileVM
 {
     [Required, MaxLength(80), Display(Name = "First name")] public string FirstName { get; set; } = "";

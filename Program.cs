@@ -5,6 +5,7 @@ using System.Threading.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using RebuildYou.Web.Data;
 using RebuildYou.Web.Models;
+using RebuildYou.Web.Services;
 
 var b = WebApplication.CreateBuilder(args);
 b.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(b.Configuration.GetConnectionString("DefaultConnection")));
@@ -19,6 +20,8 @@ b.Services.AddIdentity<ApplicationUser, IdentityRole>(o =>
     o.Lockout.MaxFailedAccessAttempts = 5;
     o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+b.Services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(1));
+b.Services.AddTransient<IAppEmailSender, SmtpEmailSender>();
 
 b.Services.ConfigureApplicationCookie(o =>
 {

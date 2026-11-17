@@ -4,7 +4,7 @@ ASP.NET Core 8 MVC, Entity Framework Core, SQL Server, ASP.NET Core Identity, Bo
 
 ## What is included
 - Public site: Home, About, Training Programmes (list and detail), Career Categories (each shows only its own opportunities), Opportunities (search, filters, paging), Contact form (saved to the database, honeypot and rate limiting), Privacy notice.
-- Accounts: Register (all spec fields saved to SQL Server), Login/Logout, lockout after 5 failed attempts, Profile, Change password. Passwords are hashed by Identity.
+- Accounts: Register (all spec fields saved to SQL Server), Login/Logout, lockout after 5 failed attempts, email-based password recovery, Profile, Change password. Passwords are hashed by Identity.
 - User dashboard: profile completion, CV upload/download/delete (PDF/DOCX, 5 MB, magic-byte check, random file names, stored in App_Data outside wwwroot, ownership enforced), save opportunities, apply (duplicates blocked, expired/closed rejected, external-URL opportunities link out), My Applications with status, withdraw.
 - Admin dashboard (role "Admin"): live statistics from the database, user search and suspend/reactivate, opportunity create/edit/publish/close/archive, applications (status, interview date, internal notes, CV viewing logged in an audit log), CSV export (no personal data), training programme management (publish/unpublish/archive), categories, contact enquiries.
 
@@ -16,14 +16,17 @@ This version adds new tables and columns. Delete the old database first: View > 
 - One mobile number or email = one profile (enforced in the database too).
 
 ## v4 usability changes
-Short 1-minute registration (name, mobile, email, password) with the rest added later in the profile; one profile per person (duplicate email or mobile is blocked with a "log in instead" prompt); CV upload fills empty profile fields (area, education, career interests) on a best-effort basis; "Register my interest" on programmes with an admin list (Admin > Programme interest); closed vacancies hidden by default; a "Next step" card on the dashboard; "Get Work-Ready" and "For Employers" pages; show-password buttons; 48px tap targets; admin "Reset password" (temporary password) until email reset exists; WhatsApp link (confirm the number is WhatsApp-enabled).
+Short 1-minute registration (name, mobile, email, password) with the rest added later in the profile; one profile per person (duplicate email or mobile is blocked with a "log in instead" prompt); CV upload fills empty profile fields (area, education, career interests) on a best-effort basis; "Register my interest" on programmes with an admin list (Admin > Programme interest); closed vacancies hidden by default; a "Next step" card on the dashboard; "Get Work-Ready" and "For Employers" pages; show-password buttons; 48px tap targets; WhatsApp link (confirm the number is WhatsApp-enabled).
+
+## Configure password-recovery email
+Password recovery emails use the SMTP settings under `Email`. Set `Email:Host`, `Email:Port`, and `Email:FromEmail`; for authenticated SMTP also set `Email:Username` and `Email:Password`. Keep credentials in User Secrets or environment variables, not in source control. For example, environment variable names are `Email__Host`, `Email__Port`, `Email__Username`, `Email__Password`, and `Email__FromEmail`. If email is not configured, the forgot-password page explains that recovery is unavailable.
 
 ## Not included yet (next phase)
-Forgot/reset password and email verification (needs an email service), email/in-app notifications, supporting-document uploads, announcements/FAQ/testimonial CMS, Excel export, extra reports, automated tests, real photographs. See the notes in the chat for details.
+Email verification, email/in-app notifications, supporting-document uploads, announcements/FAQ/testimonial CMS, Excel export, extra reports, automated tests, real photographs. See the notes in the chat for details.
 
 ## Run in Visual Studio 2022
 1. Open `RebuildYou.sln` (File > Open > Project/Solution). Install the ".NET 8 SDK" and "ASP.NET and web development" workload if prompted.
-2. Connection string: edit `ConnectionStrings:DefaultConnection` in `appsettings.json`. The default uses SQL Server LocalDB. For a full SQL Server use e.g. `Server=YOURSERVER;Database=RebuildYouDb;User Id=...;Password=...;TrustServerCertificate=True`. Never commit real passwords; use User Secrets (right-click project > Manage User Secrets) or environment variables.
+2. Connection string: edit `ConnectionStrings:DefaultConnection` in `appsettings.json`. The default uses SQL Server LocalDB. For a full SQL Server use e.g. `Server=YOURSERVER;Database=RebuildYouDb;User Id=...;Password=...;TrustServerCertificate=True`. Never commit real passwords; use User Secrets (right-click project > Manage User Secrets) or environment variables. Configure SMTP as described in [Configure password-recovery email](#configure-password-recovery-email).
 3. First administrator: in User Secrets add
    ```json
    { "AdminSeed": { "Email": "you@yourdomain.co.za", "Password": "A-Strong-Password-1" } }

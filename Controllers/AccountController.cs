@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Net.Mail;
 using RebuildYou.Web.Data;
 using RebuildYou.Web.Models;
+using RebuildYou.Web.Services;
 
 namespace RebuildYou.Web.Controllers;
 
-public class AccountController(UserManager<ApplicationUser> users, SignInManager<ApplicationUser> signIn, AppDbContext db) : Controller
+public class AccountController(UserManager<ApplicationUser> users, SignInManager<ApplicationUser> signIn, AppDbContext db, IAppEmailSender emailSender, ILogger<AccountController> logger) : Controller
 {
     static string Norm(string p) { var d = new string(p.Where(char.IsDigit).ToArray()); return "+" + (d.StartsWith("0") ? "27" + d.Substring(1) : d); }
 
@@ -61,6 +63,70 @@ public class AccountController(UserManager<ApplicationUser> users, SignInManager
         }
         ModelState.AddModelError("", res.IsLockedOut ? "Too many failed attempts. Try again in 15 minutes." : "Incorrect email address or password.");
         return View(m);
+    }
+
+    [HttpGet] public IActionResult ForgotPassword() => View(new ForgotPasswordVM());
+
+    [HttpPost, EnableRateLimiting("forms")]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordVM m)
+    {
+        if (!ModelState.IsValid) return View(m);
+        if (!emailSender.IsConfigured)
+        {
+            ModelState.AddModelError("", "Password recovery is not configured yet. Please contact RebuildYOU for assistance.");
+            return View(m);
+        }
+
+        var user = await users.FindByEmailAsync(m.Email.Trim());
+        if (user is not null && user.IsActive && !string.IsNullOrWhiteSpace(user.Email))
+        {
+            var token = await users.GeneratePasswordResetTokenAsync(user);
+            var resetUrl = Url.Action(nameof(ResetPassword), "Account", new { email = user.Email, token }, Request.Scheme);
+            if (resetUrl is null) return Problem("The password reset link could not be generated.");
+            try
+            {
+                await emailSender.SendPasswordResetAsync(user.Email, resetUrl);
+            }
+            catch (Exception ex) when (ex is SmtpException or InvalidOperationException or ArgumentException)
+            {
+                logger.LogError(ex, "Could not send a password reset email.");
+            }
+        }
+
+        return View("ForgotPasswordConfirmation");
+    }
+
+    [HttpGet]
+    public IActionResult ResetPassword(string? email, string? token)
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            return View("ResetPasswordInvalid");
+        Response.Headers.CacheControl = "no-store";
+        Response.Headers["Referrer-Policy"] = "no-referrer";
+        return View(new ResetPasswordVM { Email = email, Token = token });
+    }
+
+    [HttpPost, EnableRateLimiting("forms")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordVM m)
+    {
+        Response.Headers.CacheControl = "no-store";
+        Response.Headers["Referrer-Policy"] = "no-referrer";
+        if (!ModelState.IsValid) return View(m);
+        var user = await users.FindByEmailAsync(m.Email.Trim());
+        if (user is null || !user.IsActive)
+            return View("ResetPasswordInvalid");
+
+        var result = await users.ResetPasswordAsync(user, m.Token, m.Password);
+        if (!result.Succeeded)
+        {
+            if (result.Errors.Any(error => error.Code == "InvalidToken"))
+                return View("ResetPasswordInvalid");
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+            return View(m);
+        }
+        TempData["Success"] = "Your password has been reset. You can now log in.";
+        return RedirectToAction(nameof(Login));
     }
 
     [HttpPost] public async Task<IActionResult> Logout() { await signIn.SignOutAsync(); return RedirectToAction("Index", "Home"); }
