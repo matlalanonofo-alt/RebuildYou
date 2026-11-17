@@ -23,6 +23,6 @@
     <div class="col-12"><h2 class="h5">Recommended opportunities</h2>
       @if (Model.Recommended.Count == 0) { <div class="empty">No open opportunities yet.</div> }
       else { <div class="row g-4">@foreach (var o in Model.Recommended) { <div class="col-md-6 col-lg-4"><partial name="_OppCard" model="o" /></div> }</div> }</div>
-    <div class="col-12"><h2 class="h5">Training programmes for you</h2><div class="row g-3">@foreach (var p in Model.Programmes) { <div class="col-md-4"><a class="cat-tile" asp-controller="Training" asp-action="Details" asp-route-slug="@p.Slug"><i class="bi @p.Icon"></i><span>@p.Title</span></a></div> }</div></div>
+    <div class="col-12"><h2 class="h5">Training programmes for you</h2><div class="row g-3">@foreach (var p in Model.Programmes) { <div class="col-md-4"><a class="cat-tile" asp-controller="Training" asp-action="Index"><i class="bi @p.Icon"></i><span>@p.Title</span></a></div> }</div></div>
   </div>
 </div>
