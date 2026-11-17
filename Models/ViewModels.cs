@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 namespace RebuildYou.Web.Models;
 
 public static class Lists
@@ -92,6 +93,22 @@ public class ApplyVM
     public int? CvId { get; set; }
     [MaxLength(1500)] public string? CoverNote { get; set; }
     public bool Confirm { get; set; }
+    public IFormFile? MatricResultsFile { get; set; }
+    public IFormFile? IdentityDocumentFile { get; set; }
+    public IFormFile? ProofOfAddressFile { get; set; }
+    public IFormFile? CertificatesFile { get; set; }
+    public IFormFile? AdditionalDocumentFile { get; set; }
+    public List<ApplicationFileVM> Documents { get; set; } = new();
+}
+
+public class ApplicationFileVM
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = "";
+    public string OriginalFileName { get; set; } = "";
+    public string StoredFileName { get; set; } = "";
+    public string ContentType { get; set; } = "";
+    public long SizeBytes { get; set; }
 }
 
 public class AdminStatsVM

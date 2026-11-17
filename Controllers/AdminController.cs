@@ -24,8 +24,8 @@ public class AdminController(AppDbContext db, UserManager<ApplicationUser> users
             Users = await db.Users.CountAsync(), ActiveUsers = await db.Users.CountAsync(u => u.IsActive),
             Cvs = await db.CvDocuments.CountAsync(),
             Published = await db.Opportunities.CountAsync(o => o.Status == ListingStatus.Published),
-            Open = await db.Opportunities.CountAsync(o => o.Status == ListingStatus.Published && o.Deadline >= today),
-            Expired = await db.Opportunities.CountAsync(o => o.Status == ListingStatus.Published && o.Deadline < today),
+            Open = await db.Opportunities.CountAsync(o => o.Status == ListingStatus.Published && o.Deadline > today),
+            Expired = await db.Opportunities.CountAsync(o => o.Status == ListingStatus.Published && o.Deadline <= today),
             Applications = await db.Applications.CountAsync(),
             AwaitingReview = await db.Applications.CountAsync(a => a.Status == ApplicationStatus.Submitted),
             Shortlisted = await db.Applications.CountAsync(a => a.Status == ApplicationStatus.Shortlisted),
@@ -71,16 +71,6 @@ public class AdminController(AppDbContext db, UserManager<ApplicationUser> users
         if (!string.IsNullOrWhiteSpace(ev)) query = query.Where(l => l.Event == ev);
         ViewBag.Q = q; ViewBag.Ev = ev;
         return View(await query.OrderByDescending(l => l.At).Take(300).ToListAsync());
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> ToggleAdmin(string id)
-    {
-        var u = await users.FindByIdAsync(id);
-        if (u is null || u.Id == Me) return RedirectToAction(nameof(Users));
-        if (await users.IsInRoleAsync(u, "Admin")) { await users.RemoveFromRoleAsync(u, "Admin"); await Log("Removed admin access", u.Email); TempData["Success"] = u.Email + " is no longer an administrator."; }
-        else { await users.AddToRoleAsync(u, "Admin"); await Log("Granted admin access", u.Email); TempData["Success"] = u.Email + " is now an administrator."; }
-        return RedirectToAction(nameof(Users));
     }
 
     [HttpPost]
@@ -131,6 +121,17 @@ public class AdminController(AppDbContext db, UserManager<ApplicationUser> users
         return RedirectToAction(nameof(Opportunities));
     }
 
+    [HttpPost]
+    public async Task<IActionResult> DeleteOpportunity(int id)
+    {
+        var o = await db.Opportunities.FindAsync(id); if (o is null) return NotFound();
+        o.Status = ListingStatus.Archived;
+        await db.SaveChangesAsync();
+        await Log("Archived opportunity", o.Title);
+        TempData["Success"] = "Opportunity removed from available vacancies.";
+        return RedirectToAction(nameof(Opportunities));
+    }
+
     // ---------- Applications ----------
     public async Task<IActionResult> Applications(ApplicationStatus? status, int? opportunityId)
     {
@@ -138,7 +139,31 @@ public class AdminController(AppDbContext db, UserManager<ApplicationUser> users
         if (status.HasValue) q = q.Where(a => a.Status == status);
         if (opportunityId.HasValue) q = q.Where(a => a.OpportunityId == opportunityId);
         ViewBag.Status = status;
-        return View(await q.OrderByDescending(a => a.SubmittedAt).Take(300).ToListAsync());
+        var applications = await q.OrderByDescending(a => a.SubmittedAt).Take(300).ToListAsync();
+        var documents = new Dictionary<int, List<ApplicationFileVM>>();
+        foreach (var application in applications)
+        {
+            var metadataPath = Path.Combine(ApplicationFilesFolder, application.Id.ToString(), "documents.json");
+            if (System.IO.File.Exists(metadataPath))
+                documents[application.Id] = System.Text.Json.JsonSerializer.Deserialize<List<ApplicationFileVM>>(await System.IO.File.ReadAllTextAsync(metadataPath)) ?? new();
+        }
+        ViewBag.ApplicationDocuments = documents;
+        return View(applications);
+    }
+
+    string ApplicationFilesFolder => Path.Combine(env.ContentRootPath, "App_Data", "applications");
+
+    public async Task<IActionResult> ViewApplicationFile(int applicationId, Guid fileId)
+    {
+        var metadataPath = Path.Combine(ApplicationFilesFolder, applicationId.ToString(), "documents.json");
+        if (!System.IO.File.Exists(metadataPath)) return NotFound();
+        var documents = System.Text.Json.JsonSerializer.Deserialize<List<ApplicationFileVM>>(await System.IO.File.ReadAllTextAsync(metadataPath)) ?? new();
+        var document = documents.FirstOrDefault(d => d.Id == fileId);
+        if (document is null) return NotFound();
+        var path = Path.Combine(ApplicationFilesFolder, applicationId.ToString(), Path.GetFileName(document.StoredFileName));
+        if (!System.IO.File.Exists(path)) return NotFound();
+        await Log("Admin viewed application document", $"Application {applicationId}, document {fileId}");
+        return PhysicalFile(path, document.ContentType, document.OriginalFileName);
     }
 
     [HttpPost]

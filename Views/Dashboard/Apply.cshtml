@@ -3,12 +3,21 @@
 <div class="container section narrow">
   <h1>Apply: @Model.Opportunity.Title</h1><p class="text-muted-ry">@Model.Opportunity.EmployerName &middot; closes @Model.Opportunity.Deadline.ToString("d MMMM yyyy")</p>
   <div class="feature mb-4"><h2 class="h6">Your details</h2><p class="mb-0">@Model.User.FullName<br />@Model.User.Email &middot; @Model.User.PhoneNumber<br />@Model.User.City &middot; @Model.User.EducationLevel</p><a asp-controller="Account" asp-action="Profile" class="small">Update my profile</a></div>
-  <form asp-action="Apply" asp-route-id="@Model.Opportunity.Id" method="post">
+  <form asp-action="Apply" asp-route-id="@Model.Opportunity.Id" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="All" class="alert alert-danger"></div>
     <h2 class="h6">Select your CV</h2>
     @if (Model.Cvs.Count == 0) { <div class="alert alert-warning">You need to upload a CV first. <a asp-action="Cv">Upload CV</a></div> }
     @foreach (var c in Model.Cvs) { <div class="form-check"><input class="form-check-input" type="radio" name="CvId" id="cv@(c.Id)" value="@c.Id" checked="@(Model.CvId == c.Id)" /><label class="form-check-label" for="cv@(c.Id)">@c.OriginalFileName (@c.UploadedAt.ToLocalTime().ToString("d MMM yyyy"))</label></div> }
     @if (!string.IsNullOrWhiteSpace(Model.Opportunity.DocumentsRequired)) { <p class="small mt-3">Documents requested by the employer: @Model.Opportunity.DocumentsRequired</p> }
+    <h2 class="h6 mt-4">Supporting documents (optional)</h2>
+    <p class="small text-muted-ry">Attach any documents requested by the employer. PDF, DOCX, JPG and PNG files up to 5 MB each are accepted.</p>
+    <div class="row g-3">
+      <div class="col-md-6"><label for="MatricResultsFile" class="form-label">Matric results / certificate</label><input id="MatricResultsFile" name="MatricResultsFile" type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" class="form-control" /><span asp-validation-for="MatricResultsFile" class="text-danger"></span></div>
+      <div class="col-md-6"><label for="IdentityDocumentFile" class="form-label">ID document</label><input id="IdentityDocumentFile" name="IdentityDocumentFile" type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" class="form-control" /><span asp-validation-for="IdentityDocumentFile" class="text-danger"></span></div>
+      <div class="col-md-6"><label for="ProofOfAddressFile" class="form-label">Proof of address</label><input id="ProofOfAddressFile" name="ProofOfAddressFile" type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" class="form-control" /><span asp-validation-for="ProofOfAddressFile" class="text-danger"></span></div>
+      <div class="col-md-6"><label for="CertificatesFile" class="form-label">Certificates / qualifications</label><input id="CertificatesFile" name="CertificatesFile" type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" class="form-control" /><span asp-validation-for="CertificatesFile" class="text-danger"></span></div>
+      <div class="col-12"><label for="AdditionalDocumentFile" class="form-label">Additional supporting document</label><input id="AdditionalDocumentFile" name="AdditionalDocumentFile" type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" class="form-control" /><span asp-validation-for="AdditionalDocumentFile" class="text-danger"></span></div>
+    </div>
     <div class="mt-3"><label for="CoverNote" class="form-label">Short note to the recruiter (optional)</label><textarea id="CoverNote" name="CoverNote" rows="4" maxlength="1500" class="form-control">@Model.CoverNote</textarea></div>
     <div class="form-check mt-3"><input class="form-check-input" type="checkbox" name="Confirm" id="Confirm" value="true" /><label class="form-check-label" for="Confirm">I confirm that the information I have provided is accurate.</label></div>
     <button class="btn btn-ry btn-lg mt-4" disabled="@(Model.Cvs.Count == 0)">Submit application</button>

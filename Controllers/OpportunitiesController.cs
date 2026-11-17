@@ -18,7 +18,7 @@ public class OpportunitiesController(AppDbContext db) : Controller
         if (categoryId.HasValue) query = query.Where(o => o.CareerCategoryId == categoryId);
         if (!string.IsNullOrWhiteSpace(location)) query = query.Where(o => o.Location.Contains(location));
         if (type.HasValue) query = query.Where(o => o.Type == type);
-        if (!includeClosed) query = query.Where(o => o.Deadline >= DateTime.Today);
+        if (!includeClosed) query = query.Where(o => o.Deadline > DateTime.Today);
         var total = await query.CountAsync();
         page = Math.Max(1, page);
         var items = await query.OrderByDescending(o => o.DatePublished).Skip((page - 1) * PageSize).Take(PageSize).ToListAsync();

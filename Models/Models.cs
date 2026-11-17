@@ -58,7 +58,7 @@ public class Opportunity
     public ListingStatus Status { get; set; } = ListingStatus.Draft;
     [Display(Name = "External application URL"), MaxLength(400), Url] public string? ExternalUrl { get; set; }
     public bool IsDemo { get; set; }
-    [NotMapped] public bool IsOpen => Status == ListingStatus.Published && Deadline.Date >= DateTime.Today;
+    [NotMapped] public bool IsOpen => Status == ListingStatus.Published && Deadline.Date > DateTime.Today;
 }
 
 public class JobApplication

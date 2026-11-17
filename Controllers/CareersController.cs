@@ -13,7 +13,7 @@ public class CareersController(AppDbContext db) : Controller
     {
         var cat = await db.Categories.FirstOrDefaultAsync(c => c.Slug == slug);
         if (cat is null) return NotFound();
-        var query = db.Opportunities.Where(o => o.CareerCategoryId == cat.Id && o.Status == ListingStatus.Published && o.Deadline >= DateTime.Today);
+        var query = db.Opportunities.Where(o => o.CareerCategoryId == cat.Id && o.Status == ListingStatus.Published && o.Deadline > DateTime.Today);
         if (!string.IsNullOrWhiteSpace(q)) query = query.Where(o => o.Title.Contains(q));
         if (!string.IsNullOrWhiteSpace(location)) query = query.Where(o => o.Location.Contains(location));
         if (type.HasValue) query = query.Where(o => o.Type == type);

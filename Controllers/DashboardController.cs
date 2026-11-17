@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using RebuildYou.Web.Data;
 using RebuildYou.Web.Models;
 using RebuildYou.Web.Services;
@@ -13,8 +14,10 @@ namespace RebuildYou.Web.Controllers;
 public class DashboardController(AppDbContext db, UserManager<ApplicationUser> users, IWebHostEnvironment env) : Controller
 {
     const long MaxCvBytes = 5 * 1024 * 1024;
+    const long MaxSupportingDocumentBytes = 5 * 1024 * 1024;
     string Uid => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     string CvFolder => Path.Combine(env.ContentRootPath, "App_Data", "cvs"); // outside wwwroot: never publicly served
+    string ApplicationFilesFolder => Path.Combine(env.ContentRootPath, "App_Data", "applications");
 
     public async Task<IActionResult> Index()
     {
@@ -22,7 +25,7 @@ public class DashboardController(AppDbContext db, UserManager<ApplicationUser> u
         var cv = await db.CvDocuments.Where(c => c.UserId == Uid).OrderByDescending(c => c.UploadedAt).FirstOrDefaultAsync();
         var fields = new[] { u.FirstName, u.Surname, u.PhoneNumber, u.City, u.EducationLevel, u.EmploymentStatus, u.CareerInterests, u.TrainingInterests };
         var pct = (int)Math.Round((fields.Count(f => !string.IsNullOrWhiteSpace(f)) + (cv != null ? 1 : 0)) * 100.0 / (fields.Length + 1));
-        var open = db.Opportunities.Include(o => o.Category).Where(o => o.Status == ListingStatus.Published && o.Deadline >= DateTime.Today);
+        var open = db.Opportunities.Include(o => o.Category).Where(o => o.Status == ListingStatus.Published && o.Deadline > DateTime.Today);
         var interest = (u.CareerInterests ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var openList = await open.OrderByDescending(o => o.DatePublished).Take(100).ToListAsync();
         var rec = interest.Length == 0 ? new List<Opportunity>() : openList.Where(o => interest.Any(i =>
@@ -113,12 +116,125 @@ public class DashboardController(AppDbContext db, UserManager<ApplicationUser> u
         ModelState.Remove("Opportunity"); ModelState.Remove("User");
         if (m.CvId is null || !await db.CvDocuments.AnyAsync(c => c.Id == m.CvId && c.UserId == Uid)) ModelState.AddModelError("", "Please select one of your uploaded CVs.");
         if (!m.Confirm) ModelState.AddModelError("", "Please confirm that your information is accurate.");
-        if (!ModelState.IsValid) { var vm = await BuildApply(o); vm.CvId = m.CvId; vm.CoverNote = m.CoverNote; return View(vm); }
-        db.Applications.Add(new JobApplication { OpportunityId = id, UserId = Uid, CvDocumentId = m.CvId, CoverNote = m.CoverNote?.Trim() });
-        try { await db.SaveChangesAsync(); }
-        catch (DbUpdateException) { TempData["Error"] = "You have already applied for this opportunity."; return RedirectToAction(nameof(MyApplications)); }
+        var uploads = new (string Name, IFormFile? File)[]
+        {
+            ("Matric results / certificate", m.MatricResultsFile),
+            ("ID document", m.IdentityDocumentFile),
+            ("Proof of address", m.ProofOfAddressFile),
+            ("Certificates / qualifications", m.CertificatesFile),
+            ("Additional supporting document", m.AdditionalDocumentFile)
+        };
+        foreach (var upload in uploads)
+        {
+            if (upload.File is null || upload.File.Length == 0) continue;
+            if (upload.File.Length > MaxSupportingDocumentBytes)
+                ModelState.AddModelError(upload.File.Name, $"{upload.Name} must be no larger than 5 MB.");
+            else if (!await IsValidSupportingDocumentAsync(upload.File))
+                ModelState.AddModelError(upload.File.Name, $"{upload.Name} must be a valid PDF, DOCX, JPG or PNG file.");
+        }
+        if (!ModelState.IsValid)
+        {
+            var vm = await BuildApply(o);
+            vm.CvId = m.CvId; vm.CoverNote = m.CoverNote;
+            return View(vm);
+        }
+
+        string? stagedDirectory = null;
+        var documents = new List<ApplicationFileVM>();
+        var selectedUploads = uploads.Where(u => u.File is { Length: > 0 }).ToList();
+        if (selectedUploads.Count > 0)
+        {
+            stagedDirectory = Path.Combine(ApplicationFilesFolder, ".pending-" + Guid.NewGuid().ToString("N"));
+            try
+            {
+                Directory.CreateDirectory(stagedDirectory);
+                foreach (var upload in selectedUploads)
+                {
+                    var file = upload.File!;
+                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    var document = new ApplicationFileVM
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = upload.Name,
+                        OriginalFileName = SafeFileName(file.FileName),
+                        StoredFileName = Guid.NewGuid().ToString("N") + extension,
+                        ContentType = SupportingDocumentContentType(extension),
+                        SizeBytes = file.Length
+                    };
+                    await using var stream = System.IO.File.Create(Path.Combine(stagedDirectory, document.StoredFileName));
+                    await file.CopyToAsync(stream);
+                    documents.Add(document);
+                }
+                await System.IO.File.WriteAllTextAsync(Path.Combine(stagedDirectory, "documents.json"), JsonSerializer.Serialize(documents));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                if (Directory.Exists(stagedDirectory)) Directory.Delete(stagedDirectory, true);
+                TempData["Error"] = "Supporting documents could not be saved. Please try again.";
+                return RedirectToAction(nameof(Apply), new { id });
+            }
+        }
+
+        await using var transaction = await db.Database.BeginTransactionAsync();
+        var application = new JobApplication { OpportunityId = id, UserId = Uid, CvDocumentId = m.CvId, CoverNote = m.CoverNote?.Trim() };
+        db.Applications.Add(application);
+        try
+        {
+            await db.SaveChangesAsync();
+            if (stagedDirectory is not null)
+                Directory.Move(stagedDirectory, Path.Combine(ApplicationFilesFolder, application.Id.ToString()));
+            await transaction.CommitAsync();
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync();
+            if (stagedDirectory is not null && Directory.Exists(stagedDirectory)) Directory.Delete(stagedDirectory, true);
+            TempData["Error"] = "You have already applied for this opportunity.";
+            return RedirectToAction(nameof(MyApplications));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            await transaction.RollbackAsync();
+            if (stagedDirectory is not null && Directory.Exists(stagedDirectory)) Directory.Delete(stagedDirectory, true);
+            var applicationDirectory = Path.Combine(ApplicationFilesFolder, application.Id.ToString());
+            if (Directory.Exists(applicationDirectory)) Directory.Delete(applicationDirectory, true);
+            TempData["Error"] = "Supporting documents could not be saved. Please try again.";
+            return RedirectToAction(nameof(Apply), new { id });
+        }
         TempData["Success"] = "Your application has been submitted. Applying does not guarantee employment, but we wish you every success.";
         return RedirectToAction(nameof(MyApplications));
+    }
+
+    static async Task<bool> IsValidSupportingDocumentAsync(IFormFile file)
+    {
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (extension is not (".pdf" or ".docx" or ".jpg" or ".jpeg" or ".png")) return false;
+        var header = new byte[8];
+        await using var stream = file.OpenReadStream();
+        var length = await stream.ReadAsync(header.AsMemory());
+        return extension switch
+        {
+            ".pdf" => length >= 4 && header[0] == 0x25 && header[1] == 0x50 && header[2] == 0x44 && header[3] == 0x46,
+            ".docx" => length >= 4 && header[0] == 0x50 && header[1] == 0x4B && header[2] == 0x03 && header[3] == 0x04,
+            ".jpg" or ".jpeg" => length >= 3 && header[0] == 0xFF && header[1] == 0xD8 && header[2] == 0xFF,
+            ".png" => length == 8 && header.SequenceEqual(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }),
+            _ => false
+        };
+    }
+
+    static string SupportingDocumentContentType(string extension) => extension switch
+    {
+        ".pdf" => "application/pdf",
+        ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".jpg" or ".jpeg" => "image/jpeg",
+        ".png" => "image/png",
+        _ => throw new InvalidOperationException("Unsupported supporting document extension.")
+    };
+
+    static string SafeFileName(string fileName)
+    {
+        var safeName = Path.GetFileName(fileName.Replace('\\', '/'));
+        return safeName.Length > 200 ? safeName[^200..] : safeName;
     }
 
     async Task<ApplyVM> BuildApply(Opportunity o) => new()

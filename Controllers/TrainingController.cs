@@ -19,7 +19,7 @@ public class TrainingController(AppDbContext db) : Controller
         ViewBag.Interested = uid != null && await db.ProgrammeInterests.AnyAsync(i => i.UserId == uid && i.ProgrammeId == p.Id);
         var today = DateTime.Today;
         ViewBag.Related = string.IsNullOrEmpty(p.RelatedCategorySlug) ? new List<Opportunity>() :
-            await db.Opportunities.Include(o => o.Category).Where(o => o.Category!.Slug == p.RelatedCategorySlug && o.Status == ListingStatus.Published && o.Deadline >= today).Take(3).ToListAsync();
+            await db.Opportunities.Include(o => o.Category).Where(o => o.Category!.Slug == p.RelatedCategorySlug && o.Status == ListingStatus.Published && o.Deadline > today).Take(3).ToListAsync();
         return View(p);
     }
 

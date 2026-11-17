@@ -9,7 +9,6 @@
     <td>@(u.LastLoginAt?.ToLocalTime().ToString("d MMM yyyy HH:mm") ?? "-")</td><td>@u.LoginCount</td><td>@(admins.Contains(u.Id) ? "Admin" : "User") @if (!u.IsActive) { <span class="badge text-bg-danger">Suspended</span> }</td>
     <td class="text-nowrap"><a class="btn btn-sm btn-ry-outline" asp-action="UserDetail" asp-route-id="@u.Id">View</a>
       <form asp-action="ToggleUser" asp-route-id="@u.Id" method="post" class="d-inline"><button class="btn btn-sm @(u.IsActive ? "btn-outline-danger" : "btn-ry-outline")">@(u.IsActive ? "Suspend" : "Reactivate")</button></form>
-      <form asp-action="ResetPassword" asp-route-id="@u.Id" method="post" class="d-inline" onsubmit="return confirm('Create a temporary password for this user?');"><button class="btn btn-sm btn-outline-secondary">Reset password</button></form>
-      <form asp-action="ToggleAdmin" asp-route-id="@u.Id" method="post" class="d-inline" onsubmit="return confirm('Change administrator access for this user?');"><button class="btn btn-sm btn-outline-secondary">@(admins.Contains(u.Id) ? "Remove admin" : "Make admin")</button></form></td></tr> }
+      <form asp-action="ResetPassword" asp-route-id="@u.Id" method="post" class="d-inline" onsubmit="return confirm('Create a temporary password for this user?');"><button class="btn btn-sm btn-outline-secondary">Reset password</button></form></td></tr> }
   </tbody></table></div>
 </div>
