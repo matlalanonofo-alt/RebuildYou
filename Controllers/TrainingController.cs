@@ -28,13 +28,13 @@ public class TrainingController(AppDbContext db) : Controller
     {
         var uid = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var p = await db.Programmes.FindAsync(id);
-        if (p is null) return NotFound();
+        if (p is null || !p.IsPublished || p.IsArchived) return NotFound();
         if (!await db.ProgrammeInterests.AnyAsync(i => i.UserId == uid && i.ProgrammeId == id))
         {
             db.ProgrammeInterests.Add(new ProgrammeInterest { UserId = uid, ProgrammeId = id });
             await db.SaveChangesAsync();
         }
         TempData["Success"] = "Thank you! RebuildYOU can now see your interest in " + p.Title + " and will use your profile details to contact you about dates.";
-        return RedirectToAction(nameof(Details), new { slug = p.Slug });
+        return RedirectToAction(nameof(Index));
     }
 }

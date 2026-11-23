@@ -16,6 +16,7 @@ public class RegisterVM
     [Required, Phone, Display(Name = "Mobile number")] public string Mobile { get; set; } = "";
     [Required, DataType(DataType.Password)] public string Password { get; set; } = "";
     public bool AcceptPrivacy { get; set; }
+    public string? ReturnUrl { get; set; }
 }
 
 public class LoginVM

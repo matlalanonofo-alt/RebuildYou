@@ -5,7 +5,8 @@
   <p>One profile for all training, workshops and vacancies. It takes about a minute. You can add more details later.</p>
   <form asp-action="Register" method="post" novalidate>
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-    @if (ViewBag.Exists == true) { <a class="btn btn-ry mb-3" asp-action="Login">Go to Log in</a> }
+    <input type="hidden" asp-for="ReturnUrl" />
+    @if (ViewBag.Exists == true) { <a class="btn btn-ry mb-3" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">Go to Log in</a> }
     <div class="mb-3"><label asp-for="FirstName" class="form-label"></label><input asp-for="FirstName" class="form-control" autocomplete="given-name" /><span asp-validation-for="FirstName" class="text-danger"></span></div>
     <div class="mb-3"><label asp-for="Surname" class="form-label"></label><input asp-for="Surname" class="form-control" autocomplete="family-name" /><span asp-validation-for="Surname" class="text-danger"></span></div>
     <div class="mb-3"><label asp-for="Mobile" class="form-label"></label><input asp-for="Mobile" class="form-control" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 065 600 1164" /><span asp-validation-for="Mobile" class="text-danger"></span></div>

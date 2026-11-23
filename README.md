@@ -60,6 +60,8 @@ In Development only, four fictional opportunities titled "[DEMO] ..." are added.
 ## Publish
 Right-click project > Publish > choose Azure App Service, IIS or Folder. Set the connection string and AdminSeed values as environment variables/app settings on the host. Make sure the host account can write to `App_Data/cvs`.
 
+All visitors use the database configured on the web host; registrations and course interest are then visible under Admin > Users and Admin > Programme interest. To accept users from other devices, publish the site and configure `DefaultConnection` to a shared, persistent SQL Server database. A `localhost` connection string is only for the machine running the app, not each visitor's device.
+
 ## Run with Docker
 Docker Desktop with Linux containers and Docker Compose is required. From the `RebuildYou` directory, set a strong SQL Server password in the current PowerShell session, then start the app and database:
 

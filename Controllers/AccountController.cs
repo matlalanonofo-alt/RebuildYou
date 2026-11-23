@@ -14,7 +14,7 @@ public class AccountController(UserManager<ApplicationUser> users, SignInManager
 {
     static string Norm(string p) { var d = new string(p.Where(char.IsDigit).ToArray()); return "+" + (d.StartsWith("0") ? "27" + d.Substring(1) : d); }
 
-    [HttpGet] public IActionResult Register() => View(new RegisterVM());
+    [HttpGet] public IActionResult Register(string? returnUrl = null) => View(new RegisterVM { ReturnUrl = returnUrl });
 
     [HttpPost, EnableRateLimiting("forms")]
     public async Task<IActionResult> Register(RegisterVM m)
@@ -40,6 +40,7 @@ public class AccountController(UserManager<ApplicationUser> users, SignInManager
         u.LastLoginAt = DateTime.UtcNow; u.LoginCount = 1; await users.UpdateAsync(u); await db.SaveChangesAsync();              // role is never taken from the form
         await signIn.SignInAsync(u, isPersistent: false);
         TempData["Success"] = $"Welcome to RebuildYOU, {u.FirstName}! Your account has been created.";
+        if (!string.IsNullOrEmpty(m.ReturnUrl) && Url.IsLocalUrl(m.ReturnUrl)) return LocalRedirect(m.ReturnUrl);
         return RedirectToAction("Index", "Dashboard");
     }
 
