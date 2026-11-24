@@ -100,6 +100,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 <script>document.querySelectorAll('[data-pw]').forEach(function(b){b.addEventListener('click',function(){var i=document.querySelector(b.dataset.pw),s=i.type==='password';i.type=s?'text':'password';b.textContent=s?'Hide':'Show';});});</script>
+<script src="~/js/chatbot.js"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
