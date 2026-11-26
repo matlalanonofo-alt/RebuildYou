@@ -25,7 +25,7 @@ public class DashboardController(AppDbContext db, UserManager<ApplicationUser> u
         var cv = await db.CvDocuments.Where(c => c.UserId == Uid).OrderByDescending(c => c.UploadedAt).FirstOrDefaultAsync();
         var fields = new[] { u.FirstName, u.Surname, u.PhoneNumber, u.City, u.EducationLevel, u.EmploymentStatus, u.CareerInterests, u.TrainingInterests };
         var pct = (int)Math.Round((fields.Count(f => !string.IsNullOrWhiteSpace(f)) + (cv != null ? 1 : 0)) * 100.0 / (fields.Length + 1));
-        var open = db.Opportunities.Include(o => o.Category).Where(o => o.Status == ListingStatus.Published && o.Deadline > DateTime.Today);
+        var open = db.Opportunities.Include(o => o.Category).Where(o => !o.IsDemo && o.Status == ListingStatus.Published && o.Deadline > DateTime.Today);
         var interest = (u.CareerInterests ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var openList = await open.OrderByDescending(o => o.DatePublished).Take(100).ToListAsync();
         var rec = interest.Length == 0 ? new List<Opportunity>() : openList.Where(o => interest.Any(i =>
@@ -35,7 +35,7 @@ public class DashboardController(AppDbContext db, UserManager<ApplicationUser> u
         {
             User = u, Completion = pct, Cv = cv, Recommended = rec,
             Applications = await db.Applications.Include(a => a.Opportunity).Where(a => a.UserId == Uid).OrderByDescending(a => a.SubmittedAt).Take(5).ToListAsync(),
-            Saved = await db.Opportunities.Include(o => o.Category).Where(o => db.SavedOpportunities.Any(s => s.UserId == Uid && s.OpportunityId == o.Id)).Take(5).ToListAsync(),
+            Saved = await db.Opportunities.Include(o => o.Category).Where(o => !o.IsDemo && db.SavedOpportunities.Any(s => s.UserId == Uid && s.OpportunityId == o.Id)).Take(5).ToListAsync(),
             Programmes = await db.Programmes.Where(p => p.IsPublished && !p.IsArchived).OrderBy(p => p.SortOrder).Take(3).ToListAsync()
         });
     }
@@ -99,7 +99,7 @@ public class DashboardController(AppDbContext db, UserManager<ApplicationUser> u
     [HttpGet]
     public async Task<IActionResult> Apply(int id)
     {
-        var o = await db.Opportunities.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id);
+        var o = await db.Opportunities.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id && !x.IsDemo);
         if (o is null) return NotFound();
         if (!o.IsOpen || !string.IsNullOrEmpty(o.ExternalUrl)) { TempData["Error"] = "This opportunity is not accepting applications through RebuildYOU."; return RedirectToAction("Details", "Opportunities", new { id }); }
         if (await db.Applications.AnyAsync(a => a.OpportunityId == id && a.UserId == Uid)) { TempData["Error"] = "You have already applied for this opportunity."; return RedirectToAction(nameof(MyApplications)); }
@@ -109,7 +109,7 @@ public class DashboardController(AppDbContext db, UserManager<ApplicationUser> u
     [HttpPost]
     public async Task<IActionResult> Apply(int id, ApplyVM m)
     {
-        var o = await db.Opportunities.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id);
+        var o = await db.Opportunities.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id && !x.IsDemo);
         if (o is null) return NotFound();
         if (!o.IsOpen || !string.IsNullOrEmpty(o.ExternalUrl)) { TempData["Error"] = "This opportunity is closed or handled by the employer."; return RedirectToAction("Details", "Opportunities", new { id }); }
         if (await db.Applications.AnyAsync(a => a.OpportunityId == id && a.UserId == Uid)) { TempData["Error"] = "You have already applied for this opportunity."; return RedirectToAction(nameof(MyApplications)); }
@@ -256,5 +256,5 @@ public class DashboardController(AppDbContext db, UserManager<ApplicationUser> u
     }
 
     public async Task<IActionResult> Saved() =>
-        View(await db.Opportunities.Include(o => o.Category).Where(o => db.SavedOpportunities.Any(s => s.UserId == Uid && s.OpportunityId == o.Id)).ToListAsync());
+        View(await db.Opportunities.Include(o => o.Category).Where(o => !o.IsDemo && db.SavedOpportunities.Any(s => s.UserId == Uid && s.OpportunityId == o.Id)).ToListAsync());
 }

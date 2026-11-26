@@ -37,7 +37,7 @@ public class SearchController(AppDbContext db, IConfiguration cfg) : Controller
         var today = DateTime.Today;
         var programmes = await db.Programmes.AsNoTracking().Where(p => p.IsPublished && !p.IsArchived).Take(500).ToListAsync();
         var opportunities = await db.Opportunities.AsNoTracking().Include(o => o.Category)
-            .Where(o => o.Status == ListingStatus.Published && o.Deadline >= today).Take(500).ToListAsync();
+            .Where(o => !o.IsDemo && o.Status == ListingStatus.Published && o.Deadline >= today).Take(500).ToListAsync();
         var categories = await db.Categories.AsNoTracking().ToListAsync();
         var faqs = SiteKnowledge.Build(cfg, Url);
         var pages = SitePages();

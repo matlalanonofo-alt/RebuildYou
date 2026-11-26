@@ -44,7 +44,7 @@ public class OpportunitiesController(AppDbContext db) : Controller
     {
         var uid = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var s = await db.SavedOpportunities.FindAsync(uid, id);
-        if (s is null) { if (await db.Opportunities.AnyAsync(o => o.Id == id)) db.SavedOpportunities.Add(new SavedOpportunity { UserId = uid, OpportunityId = id }); }
+        if (s is null) { if (await db.Opportunities.AnyAsync(o => o.Id == id && !o.IsDemo)) db.SavedOpportunities.Add(new SavedOpportunity { UserId = uid, OpportunityId = id }); }
         else db.SavedOpportunities.Remove(s);
         await db.SaveChangesAsync();
         return RedirectToAction(nameof(Details), new { id });

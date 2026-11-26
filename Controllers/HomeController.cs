@@ -16,7 +16,7 @@ public class HomeController(AppDbContext db) : Controller
             Programmes = await db.Programmes.Where(p => p.IsPublished && !p.IsArchived).OrderBy(p => p.SortOrder).ToListAsync(),
             Categories = await db.Categories.OrderBy(c => c.SortOrder).ToListAsync(),
             Latest = await db.Opportunities.Include(o => o.Category)
-                .Where(o => o.Status == ListingStatus.Published && o.Deadline > today)
+                .Where(o => !o.IsDemo && o.Status == ListingStatus.Published && o.Deadline > today)
                 .OrderByDescending(o => o.DatePublished).Take(3).ToListAsync()
         });
     }
