@@ -6,7 +6,7 @@ namespace RebuildYou.Web.Data;
 
 public static class DbSeeder
 {
-    public static async Task RunAsync(IServiceProvider sp, bool isDev, IConfiguration cfg)
+    public static async Task RunAsync(IServiceProvider sp, IConfiguration cfg)
     {
         var db = sp.GetRequiredService<AppDbContext>();
         if (db.Database.GetMigrations().Any()) await db.Database.MigrateAsync(); else await db.Database.EnsureCreatedAsync();
@@ -74,23 +74,5 @@ public static class DbSeeder
         }
         await db.SaveChangesAsync();
 
-        if (isDev && !await db.Opportunities.AnyAsync())
-        {
-            var cats = await db.Categories.ToListAsync();
-            int C(string slug) => cats.First(c => c.Slug == slug).Id;
-            Opportunity D(string t, string slug, string loc, OpportunityType ty) => new()
-            {
-                Title = "[DEMO] " + t, EmployerName = "DEMO Employer (fictional)", CareerCategoryId = C(slug), Location = loc, Type = ty,
-                ShortDescription = "Demonstration data only. This is not a real vacancy and must be removed before go-live.",
-                Responsibilities = "Demonstration data.", Status = ListingStatus.Published, Deadline = DateTime.Today.AddDays(30), IsDemo = true,
-                ApplicationInstructions = "Demonstration only."
-            };
-            db.Opportunities.AddRange(
-                D("Hotel Receptionist", "hospitality", "Johannesburg", OpportunityType.Permanent),
-                D("Call Centre Agent", "call-centre", "Roodepoort", OpportunityType.Contract),
-                D("Administrative Assistant", "reception-admin", "Pretoria", OpportunityType.Internship),
-                D("Data Capturer", "digital-skills", "Soweto", OpportunityType.Learnership));
-            await db.SaveChangesAsync();
-        }
     }
 }

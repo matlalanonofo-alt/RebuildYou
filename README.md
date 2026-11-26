@@ -48,8 +48,8 @@ Email verification, email/in-app notifications, supporting-document uploads, ann
    When a migration exists the app applies migrations on startup instead.
 5. Press F5. Log in with the admin account and open Admin Dashboard from the profile menu.
 
-## Demo data
-In Development only, four fictional opportunities titled "[DEMO] ..." are added. Delete them in Admin > Opportunities before go-live. Training programmes are seeded with descriptions only; fees, durations and accreditation are blank until RebuildYOU confirms them.
+## Seeded content
+Career categories and training programme descriptions are seeded on first start. Fictional opportunities are not seeded. Opportunities marked as demonstration data are hidden from public listings and detail pages.
 
 ## Before go-live
 - Confirm the public email address (the profile PDF shows lereases@gmail.com, the brief shows rebuildyoutc@gmail.com). Edit `Site:Email` in `appsettings.json`.

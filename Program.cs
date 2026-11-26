@@ -54,7 +54,7 @@ app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
 using (var scope = app.Services.CreateScope())
 {
-    try { await DbSeeder.RunAsync(scope.ServiceProvider, app.Environment.IsDevelopment(), app.Configuration); }
+    try { await DbSeeder.RunAsync(scope.ServiceProvider, app.Configuration); }
     catch (Exception ex) { app.Logger.LogError(ex, "DATABASE SETUP FAILED. Check the connection string in appsettings.json and that SQL Server LocalDB is installed."); }
 }
 app.Run();

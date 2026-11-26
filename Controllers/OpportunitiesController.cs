@@ -13,7 +13,7 @@ public class OpportunitiesController(AppDbContext db) : Controller
 
     public async Task<IActionResult> Index(string? q, int? categoryId, string? location, OpportunityType? type, bool includeClosed = false, int page = 1)
     {
-        var query = db.Opportunities.Include(o => o.Category).Where(o => o.Status == ListingStatus.Published);
+        var query = db.Opportunities.Include(o => o.Category).Where(o => !o.IsDemo && o.Status == ListingStatus.Published);
         if (!string.IsNullOrWhiteSpace(q)) query = query.Where(o => o.Title.Contains(q) || o.EmployerName.Contains(q));
         if (categoryId.HasValue) query = query.Where(o => o.CareerCategoryId == categoryId);
         if (!string.IsNullOrWhiteSpace(location)) query = query.Where(o => o.Location.Contains(location));
@@ -31,7 +31,7 @@ public class OpportunitiesController(AppDbContext db) : Controller
 
     public async Task<IActionResult> Details(int id)
     {
-        var o = await db.Opportunities.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id && x.Status != ListingStatus.Draft && x.Status != ListingStatus.Archived);
+        var o = await db.Opportunities.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id && !x.IsDemo && x.Status != ListingStatus.Draft && x.Status != ListingStatus.Archived);
         if (o is null) return NotFound();
         var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
         ViewBag.Applied = uid != null && await db.Applications.AnyAsync(a => a.OpportunityId == id && a.UserId == uid);
