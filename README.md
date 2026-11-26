@@ -1,6 +1,6 @@
 # RebuildYOU Training Centre: Website and Employment Management System
 
-ASP.NET Core 8 MVC, Entity Framework Core, SQL Server, ASP.NET Core Identity, Bootstrap 5.
+ASP.NET Core 10 MVC, Entity Framework Core 10, SQL Server, ASP.NET Core Identity, Bootstrap 5.
 
 ## What is included
 - Public site: Home, About, Training Programmes (list and detail), Career Categories (each shows only its own opportunities), Opportunities (search, filters, paging), Contact form (saved to the database, honeypot and rate limiting), Privacy notice.
@@ -33,7 +33,7 @@ Replace the example values locally; never commit or share the App Password. In p
 Email verification, email/in-app notifications, supporting-document uploads, announcements/FAQ/testimonial CMS, Excel export, extra reports, automated tests, real photographs. See the notes in the chat for details.
 
 ## Run in Visual Studio 2022
-1. Open `RebuildYou.sln` (File > Open > Project/Solution). Install the ".NET 8 SDK" and "ASP.NET and web development" workload if prompted.
+1. Open `RebuildYou.sln` (File > Open > Project/Solution). Install the ".NET 10 SDK" and "ASP.NET and web development" workload if prompted.
 2. Connection string: edit `ConnectionStrings:DefaultConnection` in `appsettings.json`. The default uses SQL Server LocalDB. For a full SQL Server use e.g. `Server=YOURSERVER;Database=RebuildYouDb;User Id=...;Password=...;TrustServerCertificate=True`. Never commit real passwords; use User Secrets (right-click project > Manage User Secrets) or environment variables. Configure SMTP as described in [Configure password-recovery email](#configure-password-recovery-email).
 3. First administrator: in User Secrets add
    ```json

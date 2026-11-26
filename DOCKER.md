@@ -1,6 +1,6 @@
 # Run RebuildYOU with Docker Desktop
 
-The project is an ASP.NET Core 8 MVC application; GitHub itself does not run it. `ERR_CONNECTION_REFUSED` at `http://localhost:8080` means no process is accepting connections on port 8080. The Dockerfile and Compose configuration in this repository start the web app and its SQL Server database together.
+The project is an ASP.NET Core 10 MVC application; GitHub itself does not run it. `ERR_CONNECTION_REFUSED` at `http://localhost:8080` means no process is accepting connections on port 8080. The Dockerfile and Compose configuration in this repository start the web app and its SQL Server database together.
 
 ## Requirements
 
@@ -43,4 +43,4 @@ The database and uploaded files are stored in Docker volumes. To permanently del
 - If port 8080 is already in use, change the left side of the `ports` mapping in `docker-compose.yml`, for example `"8081:8080"`, rebuild/start, and browse to `http://localhost:8081`.
 - The Docker setup runs the app in Production mode. It does not expose the development-only demo vacancies or the development seed account.
 
-For local development without Docker, install the .NET 8 SDK and configure a reachable SQL Server connection string; the local launch profiles use ports 5287 and 7287, not 8080.
+For local development without Docker, install the .NET 10 SDK and configure a reachable SQL Server connection string; the local launch profiles use ports 5287 and 7287, not 8080.
