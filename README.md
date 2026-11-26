@@ -40,13 +40,52 @@ Email verification, email/in-app notifications, supporting-document uploads, ann
    { "AdminSeed": { "Email": "you@yourdomain.co.za", "Password": "A-Strong-Password-1" } }
    ```
    The admin is created on first start. Remove the secret afterwards.
-4. Create the database. Quick start: just press F5; the app creates the tables automatically. Recommended (proper migrations): open Package Manager Console and run
+4. Create the database schema from the checked-in EF Core migrations. For a fresh database, run:
    ```
-   Add-Migration InitialCreate
-   Update-Database
+   dotnet ef database update
    ```
-   When a migration exists the app applies migrations on startup instead.
+   The app also applies pending migrations on startup. Back up an existing database before deploying a migration; see [Database migration, backup and rollback](#database-migration-backup-and-rollback).
 5. Press F5. Log in with the admin account and open Admin Dashboard from the profile menu.
+
+## Database migration, backup and rollback
+
+Migrations in `Data/Migrations` are the source of truth for the SQL Server schema. Before each production deployment, take and verify a full database backup (for example, in SSMS: right-click the database > Tasks > Back Up > Full). Also back up `App_Data/cvs`; those uploaded files are stored separately from SQL Server.
+
+Deploy the application and migrations together. Startup applies pending migrations with EF Core `MigrateAsync`; alternatively, apply them deliberately before starting the new version:
+
+```powershell
+dotnet ef database update
+```
+
+For a rollback, stop the application first. Prefer restoring the pre-deployment database backup and matching `App_Data/cvs` backup, then redeploy the previous application version. A migration can also be reverted to a named earlier migration with `dotnet ef database update <PreviousMigration>`, but down migrations may discard data. Review the migration's `Down` method and rehearse the rollback against a restored copy before using it in production. Never use `dotnet ef database update 0` against a live database.
+
+Databases originally created with `EnsureCreated` have no EF migration history. Do not run the initial migration against such a database as-is: it will try to create tables that already exist. Back up the database and compare its schema with the generated initial migration:
+
+```powershell
+dotnet ef migrations script 0 InitialCreate --output initial-schema.sql
+```
+
+The safest upgrade is to create a fresh database with the migration, then copy and verify the existing data. Alternatively, if—and only if—the existing schema matches the initial migration exactly, baseline it by recording that migration as already applied. After taking a backup and rehearsing on a restored copy, run this SQL against that database:
+
+```sql
+IF OBJECT_ID(N'dbo.__EFMigrationsHistory', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT 1 FROM [dbo].[__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261126103855_InitialCreate'
+)
+    INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261126103855_InitialCreate', N'10.0.15');
+```
+
+If the schema differs, do not baseline it; plan a data-preserving migration from its actual schema instead. Do not delete or recreate a database containing user data as a shortcut.
 
 ## Seeded content
 Career categories and training programme descriptions are seeded on first start. Fictional opportunities are not seeded. Opportunities marked as demonstration data are hidden from public listings and detail pages.
@@ -55,10 +94,13 @@ Career categories and training programme descriptions are seeded on first start.
 - Confirm the public email address (the profile PDF shows lereases@gmail.com, the brief shows rebuildyoutc@gmail.com). Edit `Site:Email` in `appsettings.json`.
 - Add licensed photographs (Unsplash/Pexels/Wikimedia) to `wwwroot/img` and reference them with alt text.
 - Have the Privacy Notice reviewed for POPIA.
-- Use HTTPS, set `ASPNETCORE_ENVIRONMENT=Production`, back up `App_Data/cvs` together with the database.
+- Use HTTPS, set `ASPNETCORE_ENVIRONMENT=Production`, and back up `App_Data` together with the database.
+- If TLS terminates at a reverse proxy, set `ReverseProxy__KnownProxies__0` to the actual IP address of the immediate proxy. Add further numbered entries only for trusted proxy addresses. Forwarded headers from other sources are ignored; never trust arbitrary client-supplied forwarding headers.
+- Mount `App_Data` on persistent, writable storage. It contains uploaded CVs (`App_Data/cvs`) and Data Protection keys (`App_Data/data-protection-keys`), which must survive restarts and deployments. The key directory can be set explicitly with `DataProtection__KeyDirectory`; in a multi-instance deployment, all instances must share the same protected key store and upload storage.
+- Authentication cookies are secure-only outside Development. Configure the proxy to send `X-Forwarded-Proto` so HTTPS redirection and secure cookies work correctly. Database migration or seeding failures now stop startup; inspect host logs and fix the database before routing traffic.
 
 ## Publish
-Right-click project > Publish > choose Azure App Service, IIS or Folder. Set the connection string and AdminSeed values as environment variables/app settings on the host. Make sure the host account can write to `App_Data/cvs`.
+Right-click project > Publish > choose Azure App Service, IIS or Folder. Set the connection string and AdminSeed values as environment variables/app settings on the host. Make sure the host account can write to the persistent `App_Data` location. If the deployment platform replaces the application directory during publishing, configure `DataProtection__KeyDirectory` to a persistent path and mount persistent upload storage at `App_Data/cvs`.
 
 All visitors use the database configured on the web host; registrations and course interest are then visible under Admin > Users and Admin > Programme interest. To accept users from other devices, publish the site and configure `DefaultConnection` to a shared, persistent SQL Server database. A `localhost` connection string is only for the machine running the app, not each visitor's device.
 

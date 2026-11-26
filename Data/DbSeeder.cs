@@ -9,7 +9,7 @@ public static class DbSeeder
     public static async Task RunAsync(IServiceProvider sp, IConfiguration cfg)
     {
         var db = sp.GetRequiredService<AppDbContext>();
-        if (db.Database.GetMigrations().Any()) await db.Database.MigrateAsync(); else await db.Database.EnsureCreatedAsync();
+        await db.Database.MigrateAsync();
 
         var roles = sp.GetRequiredService<RoleManager<IdentityRole>>();
         foreach (var r in new[] { "Admin", "User" })

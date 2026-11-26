@@ -34,13 +34,13 @@ Stop the app and database while preserving their data:
 docker compose down
 ```
 
-The database and uploaded files are stored in Docker volumes. To permanently delete the database and uploaded files as well, run `docker compose down --volumes` (this cannot be undone).
+The database, uploaded files, and Data Protection keys are stored in Docker volumes. The Compose app uses Development mode because this local-only setup serves HTTP; production must use HTTPS. To permanently delete the database and uploaded files as well, run `docker compose down --volumes` (this cannot be undone).
 
 ## Troubleshooting
 
 - If `docker compose` reports that the password variable is missing, set `$env:MSSQL_SA_PASSWORD` in the same PowerShell window before running Compose.
 - If the web container exits, inspect `docker compose logs web`; if SQL Server is still starting, inspect `docker compose logs db` and then run `docker compose up -d` again after it becomes healthy.
 - If port 8080 is already in use, change the left side of the `ports` mapping in `docker-compose.yml`, for example `"8081:8080"`, rebuild/start, and browse to `http://localhost:8081`.
-- The Docker setup runs the app in Production mode. It does not expose the development-only demo vacancies or the development seed account.
+- This Compose setup is for local development only and exposes HTTP on localhost. Do not expose it directly to the internet. For a production deployment, run in Production mode behind HTTPS and configure the trusted proxy IPs as described in the README.
 
 For local development without Docker, install the .NET 10 SDK and configure a reachable SQL Server connection string; the local launch profiles use ports 5287 and 7287, not 8080.
