@@ -1,0 +1,62 @@
+@using System.Text.Json
+@using RebuildYou.Web.Services
+@inject IConfiguration Cfg
+@{
+  // One list of questions and answers (Services/SiteKnowledge.cs) feeds both the FAQ below and the chatbot.
+  var faqs = SiteKnowledge.Build(Cfg, Url);
+  var chatJson = JsonSerializer.Serialize(new
+  {
+    faqs = faqs.Select(f => new { id = f.Id, q = f.Question, a = f.Answer, k = f.Keywords, links = f.Links.Select(l => new { t = l.Text, u = l.Url }) }),
+    whatsapp = Cfg["Site:WhatsApp"],
+    contactUrl = Url.Action("Contact", "Home"),
+    searchUrl = Url.Action("Index", "Search")
+  });
+}
+<section id="faq" class="ry-faq mt-5" aria-labelledby="faq-heading">
+  <h2 id="faq-heading" class="h3">Frequently Asked Questions</h2>
+  <p class="text-muted-ry">Browse the answers below, or ask our website assistant.</p>
+  <div class="row g-4">
+    <div class="col-lg-7 order-2 order-lg-1">
+      <div class="accordion ry-acc" id="faqList">
+        @foreach (var f in faqs)
+        {
+          <div class="accordion-item" id="faq-@f.Id">
+            <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-body-@f.Id" aria-expanded="false" aria-controls="faq-body-@f.Id">@f.Question</button></h3>
+            <div id="faq-body-@f.Id" class="accordion-collapse collapse" data-bs-parent="#faqList">
+              <div class="accordion-body">
+                <p class="@(f.Links.Length > 0 ? "" : "mb-0")">@f.Answer</p>
+                @if (f.Links.Length > 0)
+                {
+                  <div class="ry-msg-links">
+                    @foreach (var l in f.Links)
+                    {
+                      var external = l.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase);
+                      <a class="btn btn-ry-outline btn-sm" href="@l.Url" target="@(external ? "_blank" : null)" rel="@(external ? "noopener noreferrer" : null)">@l.Text</a>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="col-lg-5 order-1 order-lg-2">
+      <div class="ry-chat" id="ryChat" hidden>
+        <div class="ry-chat-head">
+          <div class="ry-chat-title"><i class="bi bi-chat-dots" aria-hidden="true"></i> <span>Ask RebuildYOU</span></div>
+          <button type="button" class="ry-chat-restart" id="ryChatRestart" aria-label="Start the conversation again" title="Start again"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i></button>
+        </div>
+        <div class="ry-chat-log" id="ryChatLog" role="log" aria-live="polite" aria-label="Conversation with the RebuildYOU assistant" tabindex="0"></div>
+        <div class="ry-chat-chips" id="ryChatChips" aria-label="Suggested questions"></div>
+        <form class="ry-chat-form" id="ryChatForm" autocomplete="off">
+          <label class="visually-hidden" for="ryChatInput">Type your question</label>
+          <input id="ryChatInput" class="form-control" type="text" maxlength="200" placeholder="Type your question…" />
+          <button type="submit" class="btn btn-ry" aria-label="Send question"><i class="bi bi-send" aria-hidden="true"></i></button>
+        </form>
+        <p class="ry-chat-note">Automated assistant. Answers come from information on this website. Please do not share personal details here.</p>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" id="ry-chat-data">@Html.Raw(chatJson)</script>
+</section>

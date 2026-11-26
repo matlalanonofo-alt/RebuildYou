@@ -88,3 +88,88 @@ dt{color:var(--teal);font-weight:600}dd{margin-bottom:.75rem}
 @media (max-width:767px){.offer-layout{grid-template-columns:1fr}.offer-image-container{height:clamp(220px,60vw,360px)}}
 @media (max-width:767px){.careers-layout{grid-template-columns:1fr}.careers-image-container{height:clamp(220px,60vw,360px)}}
 @media (max-width:575px){.section{padding-top:2rem;padding-bottom:2rem}h1{font-size:2.1rem}.ry-nav .nav-link{padding:.75rem 0}}
+
+/* ---- Follow Us, search, FAQ chat (added) ---- */
+.ry-follow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem 1.5rem;margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+.ry-social{display:flex;flex-wrap:wrap;gap:.75rem;padding:0}
+.ry-footer .ry-social-link{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid var(--line);color:var(--navy);font-size:1.2rem;line-height:1;text-decoration:none;transition:transform .15s,box-shadow .15s,color .15s,border-color .15s}
+.ry-footer .ry-social-link:hover,.ry-footer .ry-social-link:focus-visible{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff;transform:translateY(-2px);box-shadow:0 6px 16px rgba(37,99,235,.3)}
+.ry-footer .ry-social-link:active{transform:translateY(0);box-shadow:none}
+@media (max-width:575px){.ry-follow{flex-direction:column;justify-content:center;text-align:center}.ry-social{justify-content:center}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.btn,.form-control,.form-select{min-height:48px}.btn-sm{min-height:40px}
+.form-control,.form-select{font-size:16px}.form-check-input{width:1.4em;height:1.4em}
+.alert.next{background:#e8efff;border-color:#c7d6fb;color:var(--navy)}
+@media (max-width:575px){.hero .btn{width:100%}.section{padding-top:2rem;padding-bottom:2rem}h1{font-size:2.1rem}.ry-nav .nav-link{padding:.75rem 0}}
+
+/* Navbar site search */
+.ry-search-toggle{display:inline-flex;align-items:center;gap:.4rem;background:none;border:0;cursor:pointer}
+.ry-search-label{display:none}
+.ry-search-menu{padding:.75rem;min-width:min(22rem,calc(100vw - 2rem));border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 28px rgba(11,22,80,.15)}
+.ry-search-form{display:flex;gap:.5rem}
+.ry-search-form .btn{padding:.5rem 1rem}
+@media (max-width:1199px){.ry-search-label{display:inline}.ry-search-menu{position:static!important;transform:none!important;min-width:0;width:100%;box-shadow:none;margin-top:.25rem}}
+
+/* FAQ + chatbot (About page) */
+.ry-chat[hidden]{display:none}
+.ry-chat{min-width:0;max-width:100%;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 26px rgba(11,22,80,.08);position:sticky;top:5.5rem}
+.ry-chat-head{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;color:#fff;background:linear-gradient(135deg,var(--navy),var(--blue) 60%,var(--purple))}
+.ry-chat-title{font-weight:700;display:flex;align-items:center;gap:.5rem}
+.ry-chat-restart{background:rgba(255,255,255,.15);border:0;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer}
+.ry-chat-restart:hover,.ry-chat-restart:focus-visible{background:rgba(255,255,255,.3)}
+.ry-chat-log{height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;background:var(--soft)}
+.ry-msg{display:flex;flex-direction:column;gap:.4rem;max-width:92%}
+.ry-msg-bot{align-self:flex-start}
+.ry-msg-user{align-self:flex-end;align-items:flex-end}
+.ry-bubble{padding:.6rem .9rem;border-radius:14px;font-size:.95rem;line-height:1.45;white-space:pre-line}
+.ry-msg-bot .ry-bubble{background:#fff;border:1px solid var(--line);color:var(--ink);border-top-left-radius:4px}
+.ry-msg-user .ry-bubble{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-top-right-radius:4px}
+.ry-msg-links{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.25rem}
+.ry-msg-links .btn{padding:.3rem .8rem;font-size:.85rem}
+.ry-chat-chips{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1rem;border-top:1px solid var(--line);background:#fff;max-height:7.5rem;overflow-y:auto}
+.ry-qchip{max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.3;background:#fff;border:1.5px solid var(--blue);color:var(--blue);border-radius:16px;padding:.25rem .75rem;font-size:.85rem;cursor:pointer;text-align:left;transition:background .15s,color .15s}
+.ry-qchip:hover,.ry-qchip:focus-visible{background:var(--blue);color:#fff}
+.ry-chat-form{display:flex;gap:.5rem;padding:.75rem 1rem;border-top:1px solid var(--line);background:#fff}
+.ry-chat-form .btn{padding:.45rem 1rem}
+.ry-chat-note{margin:0;padding:0 1rem .75rem;font-size:.75rem;color:var(--muted);background:#fff}
+@media (max-width:991px){.ry-chat{position:static}.ry-chat-log{height:280px}}
+.hero{background-color:transparent}
+@media print{.ry-dots-canvas{display:none!important}}
+
+/* ===== Company-colour tones =====================================================================
+   Every Home box has a tone (class "tone-blue" etc.) and the page it links to uses the same tone
+   (set in _Layout.cshtml), so a box and its page share one colour. --c1/--c2/--c3 are RGB triplets,
+   --cd is the darker accent used for icons. The soft patches sit behind the content (z-index -1) and under the moving dots. */
+.tone-blue  {--c1:37,99,235;  --c2:34,211,238; --c3:109,40,217; --cd:37,99,235}
+.tone-green {--c1:16,185,129; --c2:34,211,238; --c3:37,99,235;  --cd:5,150,105}
+.tone-cyan  {--c1:34,211,238; --c2:37,99,235;  --c3:16,185,129; --cd:8,145,178}
+.tone-purple{--c1:109,40,217; --c2:37,99,235;  --c3:34,211,238; --cd:109,40,217}
+.tone-teal  {--c1:14,116,144; --c2:16,185,129; --c3:109,40,217; --cd:14,116,144}
+.tone-indigo{--c1:79,70,229;  --c2:109,40,217; --c3:34,211,238; --cd:79,70,229}
+
+/* a coloured box on the Home page. The colour is wider than the box (full screen width) and fades out at the
+   top and bottom, so neighbouring boxes blend into each other with no hard edges or lines. */
+.ry-box{position:relative;isolation:isolate}
+.ry-box::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(60% 90% at 10% 40%,rgba(var(--c1),.34),transparent 75%),
+    radial-gradient(55% 85% at 92% 65%,rgba(var(--c2),.24),transparent 75%),
+    radial-gradient(40% 60% at 60% 5%,rgba(var(--c3),.14),transparent 75%)}
+.ry-home-glow,.ry-page{overflow-x:clip}   /* the full-width colour never causes a sideways scrollbar */
+
+/* the page a box links to: same shade, spread over the whole page like the Home page */
+.ry-page{position:relative}
+.ry-page::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(900px 720px at 0% 7%,rgba(var(--c1),.36),transparent 70%),
+    radial-gradient(800px 620px at 100% 5%,rgba(var(--c2),.20),transparent 70%),
+    radial-gradient(1000px 780px at 0% 38%,rgba(var(--c1),.26),transparent 70%),
+    radial-gradient(900px 720px at 100% 52%,rgba(var(--c3),.24),transparent 70%),
+    radial-gradient(1000px 780px at 0% 74%,rgba(var(--c2),.26),transparent 70%),
+    radial-gradient(1100px 800px at 100% 100%,rgba(var(--c1),.30),transparent 70%)}
+
+/* coloured tiles (the "What would you like to do today?" boxes and the career categories) */
+.cat-tile[class*="tone-"]{background:linear-gradient(135deg,rgba(var(--c1),.22),rgba(var(--c2),.12));border-color:rgba(var(--c1),.5)}
+.cat-tile[class*="tone-"] i{color:rgb(var(--cd))}
+.cat-tile[class*="tone-"]:hover{background:linear-gradient(135deg,rgba(var(--c1),.34),rgba(var(--c2),.2));border-color:rgb(var(--c1))}

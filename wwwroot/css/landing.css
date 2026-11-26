@@ -1,0 +1,19 @@
+/* Landing page: one screen, dark navy background, centred logo (same colours/fonts as the supplied reference). */
+.rl-hero{--rl-nav:72px;position:relative;box-sizing:border-box;height:max(560px,calc(100svh - var(--rl-nav)));overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 45%,#2c2c5a 0%,#1f2046 55%,#161735 100%)}
+.rl-brand{display:flex;flex-direction:column;align-items:center;container-type:inline-size;width:min(760px,92vw);gap:min(3.2vw,28px)}
+.rl-mark{width:min(30vw,210px,28svh);height:auto;filter:drop-shadow(0 0 18px rgba(79,214,234,.25))}
+.rl-word{display:flex;flex-direction:column;align-items:center;font-family:'Montserrat','Figtree',system-ui,sans-serif;white-space:nowrap}
+.rl-name{font-weight:500;font-size:min(7.6vw,64px);letter-spacing:.3em;margin-right:-.3em;line-height:1;color:#4fd6ea}
+.rl-name b{font-weight:500;color:#4fd6ea}
+.rl-name i{font-style:normal;color:#3b3fcf}
+.rl-sub{margin-top:min(3vw,22px);font-weight:600;font-size:min(3vw,28px);letter-spacing:.3em;margin-right:-.3em;color:#4fcfe4}
+.rl-down{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:4;display:flex;flex-direction:column;align-items:center;color:#fff;text-decoration:none;font-weight:700;font-size:.85rem;text-shadow:0 2px 8px rgba(0,0,30,.8)}
+.rl-chev{filter:drop-shadow(0 2px 6px rgba(0,0,30,.8));animation:rlbob 1.8s ease-in-out infinite}
+@keyframes rlbob{50%{transform:translateY(5px)}}
+@media (prefers-reduced-motion:reduce){.rl-chev{animation:none}}
+
+.ry-home-glow .hero{background:transparent;border-bottom:0;min-height:0}
+.rl-anchor{display:block;height:0}
+

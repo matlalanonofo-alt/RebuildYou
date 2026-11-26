@@ -1,6 +1,33 @@
 @model HomeVM
 @{ ViewData["Title"] = "Build Skills. Create Opportunities. Transform Lives."; }
-<section class="hero">
+@* Landing hero: the first thing visitors see. Photos, logo and tint are set up in landing.css / landing.js. *@
+<link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
+<section class="rl-hero" id="rlHero" aria-label="Welcome to RebuildYOU Training Centre">
+  @* One screen: dark navy background with the logo centred, drawn in code so it stays sharp. Styles are in landing.css. *@
+  <div class="rl-brand" role="img" aria-label="RebuildYOU Training Centre">
+    <svg class="rl-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="rlR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f36d6"/><stop offset=".55" stop-color="#3a7be6"/><stop offset="1" stop-color="#58dcec"/></linearGradient>
+      </defs>
+      <rect x="6" y="6" width="88" height="88" fill="none" stroke="#4fd6ea" stroke-width="2.2"/>
+      <path d="M33 80V24h20a15 15 0 0 1 0 30H33m20 0l18 26" stroke="url(#rlR)" stroke-width="9" fill="none" stroke-linejoin="miter"/>
+    </svg>
+    <div class="rl-word" aria-hidden="true">
+      <span class="rl-name"><b>REBUIL</b><i>DYOU</i></span>
+      <span class="rl-sub">TRAINING CENTRE</span>
+    </div>
+  </div>
+
+  <a class="rl-down" id="rlDown" href="#rlNext">
+    <span>Scroll down</span>
+    <svg class="rl-chev" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</section>
+<span class="rl-anchor" id="rlNext"></span>
+
+<div class="ry-home-glow">
+
+<section class="hero ry-box tone-indigo">
   <div class="hero-container">
     <div class="hero-layout">
       <div class="hero-content text-start">
@@ -24,7 +51,7 @@
   <div class="col-md-4"><a class="cat-tile" asp-controller="Resources" asp-action="Index"><i class="bi bi-lightbulb"></i><span>Get work-ready: CV and interview help</span></a></div>
 </div></section>
 
-<section class="section about-section">
+<section class="section about-section ry-box tone-teal">
   <div class="about-layout">
     <div class="about-content text-center"><p class="fw-bold mb-0">BRIEFLY</p><h2 class="mt-0">About US</h2>
       <p>We are a South African skills development and training organisation equipping individuals for the modern workplace.</p>
@@ -33,7 +60,7 @@
   </div>
 </section>
 
-<section class="section careers-section">
+<section class="section careers-section ry-box tone-purple">
   <div class="careers-layout">
     <div class="careers-image-container"><img class="careers-image" src="~/img/RebuildYou2.svg" alt="RebuildYOU career pathways" /></div>
     <div class="careers-content-container"><h2 class="text-center">Explore Careers</h2>
@@ -44,7 +71,7 @@
   </div>
 </section>
 
-<section class="section offer-section">
+<section class="section offer-section ry-box tone-blue">
   <div class="offer-layout">
     <div class="offer-content-container text-center"><p class="fw-bold mb-0">A GLIMPSE OF</p><h2>What We Offer</h2><p>CV preparation, interview preparation, job-application support, professional communication, workplace expectations and career guidance.</p>
       <a class="btn btn-ry" asp-controller="Training" asp-action="Index">Learn more</a></div>
@@ -52,8 +79,15 @@
   </div>
 </section>
 
-<section class="container section text-center">
-  <h2>Ready to take your next step?</h2>
-  <p>Visit us at 2 Anderson Street, Davidsonville, Roodepoort or send us a message.</p>
-  <a class="btn btn-ry btn-lg" asp-controller="Home" asp-action="Contact">Contact Us</a>
+<section class="section text-center ry-box tone-indigo">
+  <div class="container">
+    <h2>Ready to take your next step?</h2>
+    <p>Visit us at 2 Anderson Street, Davidsonville, Roodepoort or send us a message.</p>
+    <a class="btn btn-ry btn-lg" asp-controller="Home" asp-action="Contact">Contact Us</a>
+  </div>
 </section>
+</div>
+
+@section Scripts {
+  <script src="~/js/landing.js" asp-append-version="true"></script>
+}
