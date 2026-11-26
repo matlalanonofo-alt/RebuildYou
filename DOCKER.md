@@ -44,3 +44,14 @@ The database, uploaded files, and Data Protection keys are stored in Docker volu
 - This Compose setup is for local development only and exposes HTTP on localhost. Do not expose it directly to the internet. For a production deployment, run in Production mode behind HTTPS and configure the trusted proxy IPs as described in the README.
 
 For local development without Docker, install the .NET 10 SDK and configure a reachable SQL Server connection string; the local launch profiles use ports 5287 and 7287, not 8080.
+
+## Release-container HTTPS smoke test
+
+The separate `docker-compose.staging.yml` stack runs the Release Docker image in Production mode behind Caddy TLS termination at `https://localhost:8443`. It has its own SQL Server and persistent data volumes. In PowerShell, set `MSSQL_SA_PASSWORD`, `ADMIN_SEED_EMAIL`, and `ADMIN_SEED_PASSWORD`, then run:
+
+```powershell
+docker compose -f docker-compose.staging.yml up --build -d
+.\scripts\Test-Staging.ps1
+```
+
+The smoke test checks HTTPS, the Secure authentication cookie, administrator login and authorization, opportunity publishing, and a user's CV upload/download. Caddy uses a local internal certificate; the script skips certificate trust validation only for localhost. This verifies the Release container and TLS path locally, not a public staging deployment. For external staging, use a trusted certificate and set `ReverseProxy__KnownProxies__0` to the actual immediate proxy address. Stop the local stack with `docker compose -f docker-compose.staging.yml down`; do not use `--volumes` unless its SQL data and uploaded files should be permanently removed.

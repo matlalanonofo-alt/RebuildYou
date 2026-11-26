@@ -81,3 +81,5 @@ using (var scope = app.Services.CreateScope())
     await DbSeeder.RunAsync(scope.ServiceProvider, app.Configuration);
 }
 app.Run();
+
+public partial class Program { }

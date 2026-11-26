@@ -1,0 +1,73 @@
+name: rebuildyou-step5-staging
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD before starting}
+    volumes:
+      - rebuildyou_staging_sql_data:/var/opt/mssql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      staging:
+        ipv4_address: 172.30.0.2
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=RebuildYouStaging;User Id=sa;Password=${MSSQL_SA_PASSWORD};MultipleActiveResultSets=true;TrustServerCertificate=True"
+      AdminSeed__Email: ${ADMIN_SEED_EMAIL:?Set ADMIN_SEED_EMAIL before starting}
+      AdminSeed__Password: ${ADMIN_SEED_PASSWORD:?Set ADMIN_SEED_PASSWORD before starting}
+      ReverseProxy__KnownProxies__0: 172.30.0.3
+    expose:
+      - "8080"
+    volumes:
+      - rebuildyou_staging_app_data:/app/App_Data
+    restart: unless-stopped
+    networks:
+      staging:
+        ipv4_address: 172.30.0.4
+
+  proxy:
+    image: caddy:2-alpine
+    depends_on:
+      - web
+    ports:
+      - "${STAGING_HTTPS_PORT:-8443}:443"
+    volumes:
+      - ./Caddyfile.staging:/etc/caddy/Caddyfile:ro
+      - rebuildyou_staging_caddy_data:/data
+      - rebuildyou_staging_caddy_config:/config
+    restart: unless-stopped
+    networks:
+      staging:
+        ipv4_address: 172.30.0.3
+
+volumes:
+  rebuildyou_staging_sql_data:
+  rebuildyou_staging_app_data:
+  rebuildyou_staging_caddy_data:
+  rebuildyou_staging_caddy_config:
+
+networks:
+  staging:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

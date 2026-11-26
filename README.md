@@ -113,3 +113,20 @@ docker compose up --build -d
 ```
 
 Open [http://localhost:8080](http://localhost:8080) in a browser. The SQL database and uploaded CVs are stored in Docker volumes. To create an initial administrator, also set `ADMIN_SEED_EMAIL` and `ADMIN_SEED_PASSWORD` in the same session before running Compose; without these, users can register but no administrator is seeded. Keep these values out of source control. Use `docker compose logs -f web` to view app logs and `docker compose down` to stop the services. The named volumes are retained when the services are stopped.
+
+## Integration and Release-container staging checks
+
+The integration test project uses a disposable SQL Server container and exercises migrations, account login/admin authorization, publishing an opportunity, and private CV upload/download:
+
+```powershell
+dotnet test tests\RebuildYou.Web.IntegrationTests\RebuildYou.Web.IntegrationTests.csproj --configuration Release --filter "Category=Integration"
+```
+
+Docker Desktop must be running. To exercise the actual Release image behind a local HTTPS reverse proxy, set `MSSQL_SA_PASSWORD`, `ADMIN_SEED_EMAIL`, and `ADMIN_SEED_PASSWORD` in the same PowerShell session, then run:
+
+```powershell
+docker compose -f docker-compose.staging.yml up --build -d
+.\scripts\Test-Staging.ps1
+```
+
+This local staging stack runs the app in Production mode and terminates HTTPS with Caddy. Its internal self-signed certificate is accepted by the smoke script only for localhost; it is not suitable for public staging or production. The stack uses separate persistent Docker volumes from the local development Compose setup. Stop it with `docker compose -f docker-compose.staging.yml down`; add `--volumes` only when intentionally deleting its database and uploaded files.
