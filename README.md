@@ -10,7 +10,7 @@ ASP.NET Core 8 MVC, Entity Framework Core, SQL Server, ASP.NET Core Identity, Bo
 
 ## v6 update: manager admin area (IMPORTANT: reset the database once)
 This version adds new tables and columns. Delete the old database first: View > SQL Server Object Explorer > (localdb)\\MSSQLLocalDB > Databases > RebuildYouDb > right-click > Delete (tick "Close existing connections"). Then press F5; a fresh database is created.
-- In Development, an administrator is created for you: **manager@rebuildyou.local / Manager@2026!** (file `appsettings.Development.json`). Change it before going live.
+- Create the first administrator using User Secrets or protected environment variables as described below. Do not commit administrator credentials.
 - Admin pages: Overview, Users (search, last login, login count), User detail (profile, CVs, applications, courses of interest, login history), Login activity (every register/login/failed login with time and IP), Opportunities, Applications, Programmes, Programme interest, Categories, Enquiries.
 - To give the manager her own admin login: she registers normally on the site, then an admin opens Admin > Users and presses "Make admin" next to her name.
 - One mobile number or email = one profile (enforced in the database too).

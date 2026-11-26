@@ -1,5 +1,7 @@
 **/bin/
 **/obj/
+App_Data/cvs/
+appsettings.Development.json
 .git/
 .gitignore
 .vs/

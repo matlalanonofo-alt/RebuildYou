@@ -6,6 +6,7 @@
     <UserSecretsId>rebuildyou-web-secrets</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.*" />
