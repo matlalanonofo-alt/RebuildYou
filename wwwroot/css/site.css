@@ -89,13 +89,14 @@ dt{color:var(--teal);font-weight:600}dd{margin-bottom:.75rem}
 @media (max-width:767px){.careers-layout{grid-template-columns:1fr}.careers-image-container{height:clamp(220px,60vw,360px)}}
 @media (max-width:575px){.section{padding-top:2rem;padding-bottom:2rem}h1{font-size:2.1rem}.ry-nav .nav-link{padding:.75rem 0}}
 
-/* ---- Follow Us, search, FAQ chat (added) ---- */
-.ry-follow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem 1.5rem;margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+/* ---- Social links, search, FAQ chat (added) ---- */
 .ry-social{display:flex;flex-wrap:wrap;gap:.75rem;padding:0}
-.ry-footer .ry-social-link{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid var(--line);color:var(--navy);font-size:1.2rem;line-height:1;text-decoration:none;transition:transform .15s,box-shadow .15s,color .15s,border-color .15s}
-.ry-footer .ry-social-link:hover,.ry-footer .ry-social-link:focus-visible{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff;transform:translateY(-2px);box-shadow:0 6px 16px rgba(37,99,235,.3)}
-.ry-footer .ry-social-link:active{transform:translateY(0);box-shadow:none}
-@media (max-width:575px){.ry-follow{flex-direction:column;justify-content:center;text-align:center}.ry-social{justify-content:center}}
+.ry-social-float{position:fixed;right:18px;bottom:18px;z-index:9998}
+.ry-social-float .ry-social{flex-direction:column;gap:.6rem}
+.ry-social-float .ry-social-link{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid var(--line);color:var(--navy);font-size:1.2rem;line-height:1;text-decoration:none;transition:transform .15s,box-shadow .15s,color .15s,border-color .15s}
+.ry-social-float .ry-social-link:hover,.ry-social-float .ry-social-link:focus-visible{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff;transform:translateY(-2px);box-shadow:0 6px 16px rgba(37,99,235,.3)}
+.ry-social-float .ry-social-link:active{transform:translateY(0);box-shadow:none}
+@media (max-width:480px){.ry-social-float{right:12px;bottom:12px}.ry-social-float .ry-social{gap:.5rem}.ry-social-float .ry-social-link{width:40px;height:40px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 .btn,.form-control,.form-select{min-height:48px}.btn-sm{min-height:40px}

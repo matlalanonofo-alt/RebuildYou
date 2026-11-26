@@ -95,6 +95,37 @@
   </div>
   @RenderBody()
 </main>
+@{
+  // Social links come from appsettings.json (Site section). Only absolute http(s) URLs are rendered,
+  // so a platform with an empty or invalid value is simply hidden.
+  var socialLinks = new[]
+  {
+    (Name: "Facebook",  Icon: "bi-facebook",  Url: Cfg["Site:Facebook"]),
+    (Name: "Instagram", Icon: "bi-instagram", Url: Cfg["Site:Instagram"]),
+    (Name: "TikTok",    Icon: "bi-tiktok",    Url: Cfg["Site:TikTok"]),
+    (Name: "LinkedIn",  Icon: "bi-linkedin",  Url: Cfg["Site:LinkedIn"]),
+    (Name: "YouTube",   Icon: "bi-youtube",   Url: Cfg["Site:YouTube"]),
+    (Name: "WhatsApp",  Icon: "bi-whatsapp",  Url: Cfg["Site:WhatsApp"])
+  }
+  .Where(link => Uri.TryCreate(link.Url, UriKind.Absolute, out var parsed) && (parsed.Scheme == Uri.UriSchemeHttps || parsed.Scheme == Uri.UriSchemeHttp))
+  .ToList();
+}
+@if (socialLinks.Count > 0)
+{
+  <nav class="ry-social-float" aria-label="Social media">
+    <ul class="ry-social list-unstyled mb-0">
+      @foreach (var s in socialLinks)
+      {
+        <li>
+          <a class="ry-social-link" href="@s.Url" target="_blank" rel="noopener noreferrer"
+             aria-label="RebuildYOU Training Centre on @s.Name (opens in a new tab)" title="@s.Name">
+            <i class="bi @s.Icon" aria-hidden="true"></i>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+}
 <footer class="ry-footer mt-5">
   <div class="container py-5">
     <div class="row g-4">
@@ -123,38 +154,6 @@
           <li><i class="bi bi-tiktok"></i> <a href="https://vt.tiktok.com/ZSpsydRcD/" target="_blank" rel="noopener">Rebuild You Training Centre</a></li>
         </ul></div>
     </div>
-    @{
-      // Social links come from appsettings.json (Site section). Only absolute http(s) URLs are rendered,
-      // so a platform with an empty or invalid value is simply hidden.
-      var socialLinks = new[]
-      {
-        (Name: "Facebook",  Icon: "bi-facebook",  Url: Cfg["Site:Facebook"]),
-        (Name: "Instagram", Icon: "bi-instagram", Url: Cfg["Site:Instagram"]),
-        (Name: "TikTok",    Icon: "bi-tiktok",    Url: Cfg["Site:TikTok"]),
-        (Name: "LinkedIn",  Icon: "bi-linkedin",  Url: Cfg["Site:LinkedIn"]),
-        (Name: "YouTube",   Icon: "bi-youtube",   Url: Cfg["Site:YouTube"]),
-        (Name: "WhatsApp",  Icon: "bi-whatsapp",  Url: Cfg["Site:WhatsApp"])
-      }
-      .Where(link => Uri.TryCreate(link.Url, UriKind.Absolute, out var parsed) && (parsed.Scheme == Uri.UriSchemeHttps || parsed.Scheme == Uri.UriSchemeHttp))
-      .ToList();
-    }
-    @if (socialLinks.Count > 0)
-    {
-      <section class="ry-follow" aria-labelledby="follow-us-heading">
-        <h2 id="follow-us-heading" class="h6 mb-0">Follow Us</h2>
-        <ul class="ry-social list-unstyled mb-0">
-          @foreach (var s in socialLinks)
-          {
-            <li>
-              <a class="ry-social-link" href="@s.Url" target="_blank" rel="noopener noreferrer"
-                 aria-label="RebuildYOU Training Centre on @s.Name (opens in a new tab)" title="@s.Name">
-                <i class="bi @s.Icon" aria-hidden="true"></i>
-              </a>
-            </li>
-          }
-        </ul>
-      </section>
-    }
     <hr /><p class="small mb-0 text-muted-ry">&copy; @DateTime.Now.Year Rebuild You Skills Academy (Pty) Ltd. Empowering People. Building Futures.</p>
   </div>
 </footer>
