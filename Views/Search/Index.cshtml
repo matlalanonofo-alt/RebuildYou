@@ -1,0 +1,96 @@
+@using RebuildYou.Web.Controllers
+@model SearchVM
+@{ ViewData["Title"] = string.IsNullOrEmpty(Model.Q) ? "Search" : "Search: " + Model.Q; }
+<div class="container section narrow">
+  <h1>Search</h1>
+  <form asp-controller="Search" asp-action="Index" method="get" role="search" class="ry-search-page d-flex gap-2 mb-4">
+    <label class="visually-hidden" for="searchPageInput">Search the website</label>
+    <input id="searchPageInput" name="q" value="@Model.Q" maxlength="100" class="form-control" placeholder="Search programmes, opportunities, help…" autocomplete="off" />
+    <button class="btn btn-ry" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Search</button>
+  </form>
+
+  @if (string.IsNullOrEmpty(Model.Q))
+  {
+    <p class="text-muted-ry">Search or ask in your own words, such as <em>how do I apply</em>, <em>CV help</em>, <em>internship</em> or <em>fees</em>. Small spelling mistakes are fine.</p>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-ry-outline btn-sm" asp-controller="Training" asp-action="Index">Training programmes</a>
+      <a class="btn btn-ry-outline btn-sm" asp-controller="Opportunities" asp-action="Index">Opportunities</a>
+      <a class="btn btn-ry-outline btn-sm" asp-controller="Resources" asp-action="Index">Get Work-Ready</a>
+      <a class="btn btn-ry-outline btn-sm" asp-controller="Faq" asp-action="Index">FAQ and Help</a>
+    </div>
+  }
+  else if (Model.Total == 0)
+  {
+    <div class="empty" role="status">
+      <i class="bi bi-search" aria-hidden="true"></i> No results for <strong>@Model.Q</strong>.
+      @if (!string.IsNullOrEmpty(Model.DidYouMean))
+      {
+        <span>Did you mean <a asp-controller="Search" asp-action="Index" asp-route-q="@Model.DidYouMean"><strong>@Model.DidYouMean</strong></a>?</span>
+      }
+      else
+      {
+        <span>Try different words, or <a asp-controller="Faq" asp-action="Index">ask our assistant</a>, or <a asp-controller="Home" asp-action="Contact">contact us</a> and we will help.</span>
+      }
+    </div>
+  }
+  else
+  {
+    <p class="text-muted-ry" role="status">@Model.Total result@(Model.Total == 1 ? "" : "s") for <strong>@Model.Q</strong></p>
+    @if (Model.Related.Count > 0)
+    {
+      <p class="small text-muted-ry">Also looked for: @string.Join(", ", Model.Related)</p>
+    }
+
+    @if (Model.Programmes.Count > 0)
+    {
+      <h2 class="h5 mt-4">Training programmes</h2>
+      <div class="list-group">
+        @foreach (var p in Model.Programmes)
+        {
+          <a class="list-group-item list-group-item-action" asp-controller="Training" asp-action="Details" asp-route-slug="@p.Slug"><strong>@p.Title</strong><span class="d-block small text-muted-ry">@p.Summary</span></a>
+        }
+      </div>
+    }
+    @if (Model.Opportunities.Count > 0)
+    {
+      <h2 class="h5 mt-4">Opportunities</h2>
+      <div class="list-group">
+        @foreach (var o in Model.Opportunities)
+        {
+          <a class="list-group-item list-group-item-action" asp-controller="Opportunities" asp-action="Details" asp-route-id="@o.Id"><strong>@o.Title</strong><span class="d-block small text-muted-ry">@o.EmployerName · @o.Location · closes @o.Deadline.ToString("d MMM yyyy")</span></a>
+        }
+      </div>
+      <p class="small mt-2"><a asp-controller="Opportunities" asp-action="Index" asp-route-q="@Model.Q">See all matching opportunities</a></p>
+    }
+    @if (Model.Categories.Count > 0)
+    {
+      <h2 class="h5 mt-4">Career categories</h2>
+      <div class="list-group">
+        @foreach (var c in Model.Categories)
+        {
+          <a class="list-group-item list-group-item-action" asp-controller="Careers" asp-action="Category" asp-route-slug="@c.Slug"><strong>@c.Name</strong><span class="d-block small text-muted-ry">@c.Description</span></a>
+        }
+      </div>
+    }
+    @if (Model.Faqs.Count > 0)
+    {
+      <h2 class="h5 mt-4">Answers to common questions</h2>
+      <div class="list-group">
+        @foreach (var f in Model.Faqs)
+        {
+          <a class="list-group-item list-group-item-action" href="@f.Url"><strong>@f.Title</strong><span class="d-block small text-muted-ry">@f.Summary</span></a>
+        }
+      </div>
+    }
+    @if (Model.Pages.Count > 0)
+    {
+      <h2 class="h5 mt-4">Pages</h2>
+      <div class="list-group">
+        @foreach (var p in Model.Pages)
+        {
+          <a class="list-group-item list-group-item-action" href="@p.Url"><strong>@p.Title</strong><span class="d-block small text-muted-ry">@p.Summary</span></a>
+        }
+      </div>
+    }
+  }
+</div>

@@ -12,7 +12,7 @@
   <link rel="icon" href="~/img/logo.svg" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Figtree:wght@400;500;600&family=Montserrat:wght@500;600&display=swap" rel="stylesheet" />
   <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
@@ -30,7 +30,20 @@
         <li class="nav-item"><a class="nav-link" asp-controller="Training" asp-action="Index">Courses</a></li>
         <li class="nav-item"><a class="nav-link" asp-controller="Opportunities" asp-action="Index">Careers</a></li>
         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="About">About Us</a></li>
+        <li class="nav-item"><a class="nav-link" asp-controller="Faq" asp-action="Index">FAQ</a></li>
         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
+        <li class="nav-item dropdown ry-search-item">
+          <button class="nav-link ry-search-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Search the website" title="Search">
+            <i class="bi bi-search" aria-hidden="true"></i><span class="ry-search-label">Search</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end ry-search-menu">
+            <form asp-controller="Search" asp-action="Index" method="get" role="search" class="ry-search-form">
+              <label class="visually-hidden" for="siteSearchInput">Search the website</label>
+              <input id="siteSearchInput" name="q" type="search" maxlength="100" class="form-control" placeholder="Search or ask, e.g. how do I apply?" autocomplete="off" required />
+              <button class="btn btn-ry" type="submit" aria-label="Search"><i class="bi bi-search" aria-hidden="true"></i></button>
+            </form>
+          </div>
+        </li>
       </ul>
       <div class="d-flex gap-2 align-items-center">
       @if (SignIn.IsSignedIn(User))
@@ -57,7 +70,25 @@
     </div>
   </div>
 </nav>
-<main id="main">
+@{
+  // Each public page gets the same company colour as its box on the Home page (colours are defined in site.css).
+  var routeController = (ViewContext.RouteData.Values["controller"]?.ToString() ?? "").ToLowerInvariant();
+  var routeAction = (ViewContext.RouteData.Values["action"]?.ToString() ?? "").ToLowerInvariant();
+  var pageTone = routeController switch
+  {
+    "training" => "blue",
+    "opportunities" => "green",
+    "resources" => "cyan",
+    "careers" => "purple",
+    "faq" => "indigo",
+    "search" => "blue",
+    "home" when routeAction == "about" => "teal",
+    "home" when routeAction == "employers" => "teal",
+    "home" when routeAction == "contact" => "indigo",
+    _ => ""
+  };
+}
+<main id="main" class="@(pageTone == "" ? "" : "ry-page tone-" + pageTone)">
   <div class="container pt-3">
     @if (TempData["Success"] is string ok) { <div class="alert alert-success" role="status"><i class="bi bi-check-circle"></i> @ok</div> }
     @if (TempData["Error"] is string er) { <div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-circle"></i> @er</div> }
@@ -92,6 +123,38 @@
           <li><i class="bi bi-tiktok"></i> <a href="https://vt.tiktok.com/ZSpsydRcD/" target="_blank" rel="noopener">Rebuild You Training Centre</a></li>
         </ul></div>
     </div>
+    @{
+      // Social links come from appsettings.json (Site section). Only absolute http(s) URLs are rendered,
+      // so a platform with an empty or invalid value is simply hidden.
+      var socialLinks = new[]
+      {
+        (Name: "Facebook",  Icon: "bi-facebook",  Url: Cfg["Site:Facebook"]),
+        (Name: "Instagram", Icon: "bi-instagram", Url: Cfg["Site:Instagram"]),
+        (Name: "TikTok",    Icon: "bi-tiktok",    Url: Cfg["Site:TikTok"]),
+        (Name: "LinkedIn",  Icon: "bi-linkedin",  Url: Cfg["Site:LinkedIn"]),
+        (Name: "YouTube",   Icon: "bi-youtube",   Url: Cfg["Site:YouTube"]),
+        (Name: "WhatsApp",  Icon: "bi-whatsapp",  Url: Cfg["Site:WhatsApp"])
+      }
+      .Where(link => Uri.TryCreate(link.Url, UriKind.Absolute, out var parsed) && (parsed.Scheme == Uri.UriSchemeHttps || parsed.Scheme == Uri.UriSchemeHttp))
+      .ToList();
+    }
+    @if (socialLinks.Count > 0)
+    {
+      <section class="ry-follow" aria-labelledby="follow-us-heading">
+        <h2 id="follow-us-heading" class="h6 mb-0">Follow Us</h2>
+        <ul class="ry-social list-unstyled mb-0">
+          @foreach (var s in socialLinks)
+          {
+            <li>
+              <a class="ry-social-link" href="@s.Url" target="_blank" rel="noopener noreferrer"
+                 aria-label="RebuildYOU Training Centre on @s.Name (opens in a new tab)" title="@s.Name">
+                <i class="bi @s.Icon" aria-hidden="true"></i>
+              </a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
     <hr /><p class="small mb-0 text-muted-ry">&copy; @DateTime.Now.Year Rebuild You Skills Academy (Pty) Ltd. Empowering People. Building Futures.</p>
   </div>
 </footer>
@@ -100,6 +163,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 <script>document.querySelectorAll('[data-pw]').forEach(function(b){b.addEventListener('click',function(){var i=document.querySelector(b.dataset.pw),s=i.type==='password';i.type=s?'text':'password';b.textContent=s?'Hide':'Show';});});</script>
+<script>document.addEventListener('shown.bs.dropdown',function(e){var li=e.target.closest('.ry-search-item'),i=li&&li.querySelector('input');if(i)i.focus();});</script>
+<script src="~/js/dots-bg.js" asp-append-version="true"></script>
 <script src="~/js/chatbot.js"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>

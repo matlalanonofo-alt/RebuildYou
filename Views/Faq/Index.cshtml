@@ -1,0 +1,10 @@
+@{ ViewData["Title"] = "FAQ and Help"; }
+<div class="container section">
+  <h1>FAQ and Help</h1>
+  <p class="lead">Quick answers about RebuildYOU Training Centre. Browse the questions below or ask our assistant.</p>
+  <partial name="~/Views/Home/_FaqChat.cshtml" />
+</div>
+
+@section Scripts {
+  <script src="~/js/site-chat.js" asp-append-version="true"></script>
+}
